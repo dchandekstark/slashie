@@ -1,8 +1,8 @@
 # Solrbee
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/solrbee`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Solrbee is intended as a lightweight library for interacting with a modern Solr instance
+using a managed schema.  Our intestest is primarily in using Solr as data store, for example,
+as an alterative to an RDBMS.
 
 ## Installation
 
@@ -22,7 +22,7 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+
 
 ## Development
 

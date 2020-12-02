@@ -7,14 +7,12 @@ module Solrbee
       @name = name
     end
 
-    %i[ schema fields unique_key ].each do |api|
-      define_method api do
-        SchemaApi.send(api, name)
-      end
+    def to_s
+      name
     end
 
-    def field(field_name)
-      SchemaApi.field(name, field_name)
+    def schema
+      @schema ||= SchemaApi.new(self)
     end
 
   end

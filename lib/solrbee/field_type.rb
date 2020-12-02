@@ -1,5 +1,5 @@
 module Solrbee
-  class Schema < Base
+  class FieldType < Base
 
   end
 end
