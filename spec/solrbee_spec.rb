@@ -3,7 +3,5 @@ RSpec.describe Solrbee do
     expect(Solrbee::VERSION).not_to be nil
   end
 
-  it "does something useful" do
-    expect(false).to eq(true)
-  end
+  its(:solr_url) { is_expected.to eq 'http://localhost:8983/solr/' }
 end
