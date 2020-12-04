@@ -3,8 +3,9 @@
 ![Bee photo (c) David Chandek-Stark](https://raw.githubusercontent.com/dchandekstark/images/main/solrbee.jpg)
 
 Solrbee is intended as a lightweight library for interacting with a modern Solr instance
-using a managed schema.  Our intestest is primarily in using Solr as data store, for example,
-as an alterative to an RDBMS.
+as NoSQL data store.
+
+We are currently building on the JSON APIs (V1).
 
 ## Installation
 

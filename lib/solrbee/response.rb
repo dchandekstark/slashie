@@ -1,21 +1,20 @@
+require 'hashie'
+
 module Solrbee
-  class Response < Base
+  class Response < Hashie::Mash
 
-    coerce_key :schema,         Schema
-    coerce_key :fields,         Array[Field]
-    coerce_key :field,          Field
-    coerce_key :responseHeader, Header
-    coerce_key :fieldTypes,     Array[FieldType]
-    coerce_key :fieldType,      FieldType
+    disable_warnings
 
-    def self.handle(http_response)
-      http_response.value # raises Net::HTTPServerException
-      parsed = JSON.parse(http_response.body, symbolize_names: true, object_class: Solrbee::Base)
-      new(parsed)
+    def header
+      responseHeader
     end
 
-    def status
-      responseHeader.status
+    def num_found
+      response.numFound
+    end
+
+    def docs
+      response.docs
     end
 
   end
