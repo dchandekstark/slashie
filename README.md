@@ -25,7 +25,17 @@ Or install it yourself as:
 
 ## Usage
 
-
+```
+$ bundle console
+irb(main):001:0> client = Solrbee::Client.new('solrbee')
+=> #<Solrbee::Client:0x00007fd3410d7c50 @collection="solrbee", @uri=#<URI::HTTP http://localhost:8983/solr/solrbee>>
+irb(main):002:0> client.unique_key
+=> "id"
+irb(main):003:0> client.schema_version
+=> 1.6
+irb(main):004:0> client.schema_name
+=> "default-config"
+```
 
 ## Development
 
