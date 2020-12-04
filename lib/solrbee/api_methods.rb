@@ -16,13 +16,13 @@ module Solrbee
       response.schema
     end
 
-    def fields(show_defaults: true)
-      response = get('/schema/fields?showDefaults=%s' % show_defaults)
+    def fields(**params)
+      response = get('/schema/fields', **params)
       response.fields
     end
 
-    def field(field_name, show_defaults: true)
-      response = get('/schema/fields/%s?showDefaults=%s' % [field_name, show_defaults])
+    def field(field_name, **params)
+      response = get('/schema/fields/%s' % field_name, **params)
       response.field
     end
 
@@ -30,13 +30,13 @@ module Solrbee
       @unique_key ||= get('/schema/uniquekey').uniqueKey
     end
 
-    def field_types(show_defaults: true)
-      response = get('/schema/fieldtypes?showDefaults=%s' % show_defaults)
+    def field_types(**params)
+      response = get('/schema/fieldtypes', **params)
       response.fieldTypes
     end
 
-    def field_type(field_name, show_defaults: true)
-      response = get('/schema/fieldtypes/%s?showDefaults=%s' % [field_name, show_defaults])
+    def field_type(field_name, **params)
+      response = get('/schema/fieldtypes/%s' % field_name, **params)
       response.fieldType
     end
 
@@ -60,27 +60,25 @@ module Solrbee
       post('/schema', {"replace-field"=>field})
     end
 
-    # real-time get
-    def get(*ids)
-      response = get('/get?id=%s' % ids.join(','))
-      if response.key?(:doc)
-        response.doc
-      else
-        response.response
-      end
+    # "real-time get"
+    # Note: Using POST here for simpler params.
+    def get_by_id(*ids)
+      response = post('/get', params: { id: ids })
+      response.doc || response.docs
     end
 
-    def index(*docs, commit: true)
-      post('/update/json/docs?commit=%s' % commit, docs)
+    def index(*docs, **params)
+      post('/update/json/docs', docs, **params)
     end
+    alias_method :add, :index
+    alias_method :update, :index
 
     def delete(*ids)
       post('/update', delete: ids)
     end
 
     def query(params)
-      q = JsonQuery.new(params)
-      post('/query', q)
+      post('/query', Query.new(params))
     end
 
   end

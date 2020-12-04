@@ -17,5 +17,9 @@ module Solrbee
       response.docs
     end
 
+    def doc
+      response.doc
+    end
+
   end
 end

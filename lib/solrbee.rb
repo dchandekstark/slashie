@@ -1,5 +1,6 @@
 require "solrbee/version"
 require "solrbee/response"
+require "solrbee/request_params"
 require "solrbee/query"
 require "solrbee/client"
 require "solrbee/cursor"
