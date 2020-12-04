@@ -4,17 +4,23 @@ module Solrbee
     subject { described_class.new(collection) }
     let(:collection) { 'solrbee' }
 
-    describe "connection"
+    its(:connection) { is_expected.to be_a Net::HTTP }
+    its(:cursor) { is_expected.to be_a Cursor }
 
-    describe "request_class"
+    describe "request_class" do
+      specify {
+        expect(subject.request_class(:get)).to eq Net::HTTP::Get
+      }
+      specify {
+        expect(subject.request_class(:post)).to eq Net::HTTP::Post
+      }
+    end
 
     describe "request"
 
     describe "get"
 
     describe "post"
-
-    describe "cursor"
 
     describe "reader methods" do
       its(:collection) { is_expected.to eq collection }
@@ -60,37 +66,23 @@ module Solrbee
       end
 
       # def add_field(field)
-      #   post('/schema', {"add-field"=>field})
-      # end
 
       # def delete_field(field)
-      #   post('/schema', {"delete-field"=>{"name"=>field.name}})
-      # end
 
       # def replace_field(field)
-      #   post('/schema', {"replace-field"=>field})
-      # end
 
-    # # "real-time get"
-    # # Note: Using POST here for simpler params.
-    # def get_by_id(*ids)
-    #   response = post('/get', params: { id: ids })
-    #   response.doc || response.docs
-    # end
+      # def get_by_id(*ids)
 
-    # def index(*docs, commit: false)
-    #   post('/update/json/docs?commit=%s' % commit, docs)
-    # end
-    # alias_method :add, :index
-    # alias_method :update, :index
+      # def index(*docs, **params)
 
-    # def delete(*ids)
-    #   post('/update', delete: ids)
-    # end
+      # alias_method :add, :index
 
-    # def query(params)
-    #   post('/query', Query.new(params))
-    # end
+      # alias_method :update, :index
+
+      # def delete(*ids)
+
+      # def query(params)
+
     end
   end
 end

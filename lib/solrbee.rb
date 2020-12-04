@@ -9,6 +9,8 @@ module Solrbee
 
   class Error < StandardError; end
 
+  API_VERSION = 'V1'
+
   # Single-valued field types
   STRING  = "string"
   LONG    = "plong"
