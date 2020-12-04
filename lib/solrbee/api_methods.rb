@@ -48,16 +48,20 @@ module Solrbee
       field_types.map(&:name)
     end
 
-    def add_field(field)
-      post('/schema', {"add-field"=>field})
+    def modify_schema(commands)
+      post('/schema', commands)
     end
 
-    def delete_field(field)
-      post('/schema', {"delete-field"=>{"name"=>field.name}})
+    def add_field(field)
+      modify_schema("add-field"=>field)
+    end
+
+    def delete_field(field_name)
+      modify_schema("delete-field"=>{"name"=>field_name})
     end
 
     def replace_field(field)
-      post('/schema', {"replace-field"=>field})
+      modify_schema("replace-field"=>field)
     end
 
     # "real-time get"
