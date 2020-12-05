@@ -1,6 +1,16 @@
 module Solrbee
   module ApiMethods
 
+    def ping
+      response = Request.execute(self, '/admin/ping')
+      response.status
+    end
+
+    def schema
+      response = Request.execute(self, '/schema')
+      response.schema
+    end
+
     def schema_name
       response = Request.execute(self, '/schema/name')
       response.name
@@ -9,11 +19,6 @@ module Solrbee
     def schema_version
       response = Request.execute(self, '/schema/version')
       response.version
-    end
-
-    def schema
-      response = Request.execute(self, '/schema')
-      response.schema
     end
 
     def fields(**params)

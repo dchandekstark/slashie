@@ -23,6 +23,7 @@ module Solrbee
     end
 
     describe "API methods" do
+      its(:ping) { is_expected.to eq 'OK' }
       its(:schema_name) { is_expected.to eq 'default-config' }
       its(:schema_version) { is_expected.to eq 1.6 }
       its(:unique_key) { is_expected.to eq 'id' }
