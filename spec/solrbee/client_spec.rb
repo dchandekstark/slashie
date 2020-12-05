@@ -7,20 +7,7 @@ module Solrbee
     its(:connection) { is_expected.to be_a Net::HTTP }
     its(:cursor) { is_expected.to be_a Cursor }
 
-    describe "request_class" do
-      specify {
-        expect(subject.request_class(:get)).to eq Net::HTTP::Get
-      }
-      specify {
-        expect(subject.request_class(:post)).to eq Net::HTTP::Post
-      }
-    end
-
     describe "request"
-
-    describe "get"
-
-    describe "post"
 
     describe "reader methods" do
       its(:collection) { is_expected.to eq collection }
