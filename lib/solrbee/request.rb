@@ -28,9 +28,7 @@ module Solrbee
     def uri
       client.uri.dup.tap do |u|
         u.path += path
-        unless params.empty?
-          u.query = URI.encode_www_form(params)
-        end
+        u.query = URI.encode_www_form(params) unless params.empty?
       end
     end
 
@@ -38,7 +36,7 @@ module Solrbee
       req = request_class.new(uri, headers)
       req.body = JSON.dump(data) if data
       http_response = client.connection.request(req)
-      Response.new JSON.parse(http_response.body)
+      Response.new(http_response)
     end
 
   end
