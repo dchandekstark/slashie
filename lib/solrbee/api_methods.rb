@@ -71,7 +71,7 @@ module Solrbee
 
     # "real-time get"
     def get_by_id(*ids, **params)
-      response = request('/get', params: params.merge(id: ids.join(',')) })
+      response = request('/get', params: params.merge(id: ids.join(',')))
       response.doc || response.docs
     end
 
