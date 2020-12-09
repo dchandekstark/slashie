@@ -1,17 +1,13 @@
 module Solrbee
   RSpec.describe Client do
 
-    subject { described_class.new(collection) }
-    let(:collection) { 'solrbee' }
-
     its(:connection) { is_expected.to be_a Net::HTTP }
     its(:cursor) { is_expected.to be_a Cursor }
 
     describe "request"
 
     describe "reader methods" do
-      its(:collection) { is_expected.to eq collection }
-      its(:uri) { is_expected.to eq URI("http://localhost:8983/solr/#{collection}") }
+      its(:uri) { is_expected.to eq URI("http://localhost:8983/solr/solrbee") }
     end
 
     describe "convenience methods" do

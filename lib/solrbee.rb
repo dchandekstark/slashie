@@ -6,7 +6,6 @@ require "hashie"
 
 require "solrbee/version"
 require "solrbee/response"
-require "solrbee/request"
 require "solrbee/query"
 require "solrbee/client"
 require "solrbee/cursor"

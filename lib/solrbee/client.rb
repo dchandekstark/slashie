@@ -8,13 +8,10 @@ module Solrbee
   class Client
     include ApiMethods
 
-    attr_reader :collection, :uri
+    attr_reader :uri
 
-    def initialize(collection)
-      @collection = collection
-      @uri = URI(Solrbee.solr_url).tap do |u|
-        u.path += '/%s' % URI.encode_www_form_component(collection)
-      end
+    def initialize(url = nil)
+      @uri = URI(url || ENV['SOLR_URL'])
     end
 
     def connection
@@ -26,6 +23,28 @@ module Solrbee
     def cursor
       Cursor.new(self)
     end
+
+    def request(path, data: nil, params: {})
+      req_class = data ? Net::HTTP::Post : Net::HTTP::Get
+
+      req_uri = uri.dup.tap do |u|
+        u.path += path
+        u.query = URI.encode_www_form(params) unless params.empty?
+      end
+
+      req = req_class.new(req_uri)
+      req['Accept'] = 'application/json'
+
+      if data
+        req['Content-Type'] = 'application/json'
+        req.body = JSON.dump(data)
+      end
+
+      http_response = connection.request(req)
+      content = JSON.parse(http_response.body)
+      Response.new(content)
+    end
+
 
   end
 end
