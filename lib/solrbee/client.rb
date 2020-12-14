@@ -2,8 +2,6 @@ require "net/http"
 require "uri"
 require "json"
 
-require "solrbee/api_methods"
-
 module Solrbee
   class Client
     include ApiMethods

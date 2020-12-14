@@ -1,14 +1,8 @@
-require "json"
-require "net/http"
-require "uri"
-
-require "hashie"
-
 require "solrbee/version"
-require "solrbee/response"
+require "solrbee/api_methods"
 require "solrbee/query"
-require "solrbee/client"
 require "solrbee/cursor"
+require "solrbee/client"
 
 module Solrbee
 
