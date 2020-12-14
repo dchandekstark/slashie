@@ -1,0 +1,45 @@
+v1:
+  ping:
+    path: /admin/ping
+    response_key: status
+
+  schema:
+    path: /schema
+    response_key: schema
+
+  schema_name:
+    path: /schema/name
+    response_key: name
+
+  schema_version:
+    path: /schema/version
+    response_key: version
+
+  fields:
+    path: /schema/fields
+    response_key: fields
+
+  field:
+    path: /schema/fields/%{name}
+    response_key: field
+
+  unique_key:
+    path: /schema/uniquekey
+    response_key: uniqueKey
+
+  field_types:
+    path: /schema/fieldtypes
+    response_key: fieldTypes
+
+  field_type:
+    path: /schema/fieldtypes/%{name}
+    response_key: fieldType
+
+  update:
+    path: /update
+
+  update_json:
+    path: /update/json
+
+  update_json_docs:
+    path: /update/json/docs

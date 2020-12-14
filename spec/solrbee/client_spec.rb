@@ -28,7 +28,7 @@ module Solrbee
       its(:field_types) { is_expected.to be_a Array }
 
       describe "field" do
-        let(:field) { subject.field("id") }
+        let(:field) { subject.field(name: "id") }
 
         specify {
           expect(field).to be_a Hash
@@ -39,7 +39,7 @@ module Solrbee
       end
 
       describe "field_type" do
-        let(:field_type) { subject.field_type("string") }
+        let(:field_type) { subject.field_type(name: "string") }
 
         specify {
           expect(field_type).to be_a Hash

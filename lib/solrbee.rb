@@ -1,14 +1,8 @@
-require "solrbee/version"
-require "solrbee/api_methods"
-require "solrbee/query"
-require "solrbee/cursor"
-require "solrbee/client"
+require 'yaml'
 
 module Solrbee
 
-  class Error < StandardError; end
-
-  API_VERSION = 'V1'
+  API_VERSION = 'v1'
 
   # Single-valued field types
   STRING  = "string"
@@ -29,4 +23,13 @@ module Solrbee
     ENV.fetch('SOLR_URL', 'http://localhost:8983/solr').sub(/\/\z/, '')
   end
 
+  def self.api
+    @api ||= YAML.load_file(File.expand_path('../../config/api.yml', __FILE__))[API_VERSION]
+  end
+
 end
+
+require "solrbee/version"
+require "solrbee/query"
+require "solrbee/cursor"
+require "solrbee/client"
