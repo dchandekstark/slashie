@@ -1,8 +1,8 @@
 module Solrbee
   #
-  # Summary
+  # SUMMARY
   #
-  # > client = Solrbee::Client.new('mycollection'))
+  # > client = Solrbee::Client.new
   # > cursor = Solrbee::Cursor.new(client)
   # > query = { query: 'foo:bar', sort: 'title ASC', limit: 10 }
   # > results = cursor.execute(query)
@@ -25,10 +25,10 @@ module Solrbee
 
         while true
           response = client.query(q)
-          break if response.num_found == 0
-          break if response.nextCursorMark == q.params.cursorMark
-          response.docs.each { |doc| yielder << doc }
-          q.params.cursorMark = response.nextCursorMark
+          break if response['response']['numFound'] == 0
+          break if response['nextCursorMark'] == q.params.cursorMark
+          response['response']['docs'].each { |doc| yielder << doc }
+          q.params.cursorMark = response['nextCursorMark']
         end
       end
     end

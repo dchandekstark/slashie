@@ -10,7 +10,11 @@ module Solrbee
 
     attr_reader :uri
 
-    def initialize(url = nil)
+    def self.cursor(url: nil)
+      new(url: url).cursor
+    end
+
+    def initialize(url: nil)
       @uri = URI(url || ENV['SOLR_URL'])
     end
 
@@ -24,7 +28,7 @@ module Solrbee
       Cursor.new(self)
     end
 
-    def request(path, data: nil, params: {})
+    def request(path:, data: nil, params: {})
       req_class = data ? Net::HTTP::Post : Net::HTTP::Get
 
       req_uri = uri.dup.tap do |u|
@@ -41,10 +45,8 @@ module Solrbee
       end
 
       http_response = connection.request(req)
-      content = JSON.parse(http_response.body)
-      Response.new(content)
+      JSON.parse(http_response.body)
     end
-
 
   end
 end

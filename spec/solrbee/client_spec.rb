@@ -23,7 +23,7 @@ module Solrbee
       its(:schema_name) { is_expected.to eq 'default-config' }
       its(:schema_version) { is_expected.to eq 1.6 }
       its(:unique_key) { is_expected.to eq 'id' }
-      its(:schema) { is_expected.to be_a Response }
+      its(:schema) { is_expected.to be_a Hash }
       its(:fields) { is_expected.to be_a Array }
       its(:field_types) { is_expected.to be_a Array }
 
@@ -34,7 +34,7 @@ module Solrbee
           expect(field).to be_a Hash
         }
         specify {
-          expect(field.name).to eq "id"
+          expect(field['name']).to eq "id"
         }
       end
 
@@ -45,7 +45,7 @@ module Solrbee
           expect(field_type).to be_a Hash
         }
         specify {
-          expect(field_type.name).to eq "string"
+          expect(field_type['name']).to eq "string"
         }
       end
 
