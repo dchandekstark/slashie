@@ -30,6 +30,7 @@ module Solrbee
 end
 
 require "solrbee/version"
+require "solrbee/api"
 require "solrbee/query"
 require "solrbee/cursor"
 require "solrbee/client"
