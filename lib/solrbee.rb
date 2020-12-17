@@ -1,36 +1,32 @@
-require 'yaml'
+require "solrbee/version"
+require "rom/solr"
+require "solrbee/documents"
 
 module Solrbee
 
-  API_VERSION = 'v1'
-
-  # Single-valued field types
-  STRING  = "string"
-  LONG    = "plong"
-  INT     = "pint"
-  DATE    = "pdate"
-  BOOLEAN = "boolean"
-
-  # Multi-valued field types
-  MSTRING  = "strings"
-  MLONG    = "plongs"
-  MINT     = "pints"
-  MDATE    = "pdates"
-  MBOOLEAN = "booleans"
-
-  # Base URL
-  def self.solr_url
-    ENV.fetch('SOLR_URL', 'http://localhost:8983/solr').sub(/\/\z/, '')
+  def self.gateway
+    ROM::Gateway.setup(:solr)
   end
 
-  def self.api
-    @api ||= YAML.load_file(File.expand_path('../../config/api.yml', __FILE__))[API_VERSION]
+  # @return [Solrbee::Documents] a ROM relation
+  def self.documents
+    container.relations[:select]
+  end
+
+  # @return [ROM::Configuration] configuration
+  def self.configuration
+    ROM::Configuration.new(:solr) do |config|
+      config.register_relation(Documents)
+    end
+  end
+
+  def self.container
+    ROM.container(configuration)
   end
 
 end
 
-require "solrbee/version"
-require "solrbee/api"
-require "solrbee/query"
-require "solrbee/cursor"
-require "solrbee/client"
+# require "solrbee/api"
+# require "solrbee/query"
+# require "solrbee/cursor"
+# require "solrbee/client"
