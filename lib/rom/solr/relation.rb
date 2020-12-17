@@ -1,12 +1,15 @@
 module ROM
   module Solr
     class Relation < ROM::HTTP::Relation
+
       adapter :solr
 
-      forward :query, :sort
+      forward :remove_params, :add_values, :default_params
 
-      def all
-        self
+      private
+
+      def response
+        dataset.response
       end
 
     end

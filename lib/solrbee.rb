@@ -1,6 +1,5 @@
 require "solrbee/version"
 require "rom/solr"
-require "solrbee/documents"
 
 module Solrbee
 
@@ -16,7 +15,7 @@ module Solrbee
   # @return [ROM::Configuration] configuration
   def self.configuration
     ROM::Configuration.new(:solr) do |config|
-      config.register_relation(Documents)
+      config.register_relation(ROM::Solr::SelectRelation)
     end
   end
 

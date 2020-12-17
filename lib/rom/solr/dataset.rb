@@ -1,6 +1,3 @@
-require 'rom/solr/paginated_dataset'
-require 'solrbee/cache'
-
 module ROM
   module Solr
     class Dataset < ROM::HTTP::Dataset
@@ -15,70 +12,30 @@ module ROM
         with_params params.slice(*keep)
       end
 
+      # Coerce param value to an Array and set new value
+      # to set union with other Array of values.
       def add_values(key, val)
         params[key] = Array(params[key]) | Array(val)
       end
 
       # @override
+      # Not using the superclass implementation b/c wary of deep merge.
+      # (Why is it used for query params?)
       def add_params(new_params)
         with_params params.merge(new_params)
       end
 
       def default_params(defaults)
-        with_params defaults.merge(params)
+        merged = defaults.merge(params)
+        if merged == params
+          self
+        else
+          with_params(merged)
+        end
       end
 
       def param?(key)
         params.key?(key)
-      end
-
-      def filter(*fq)
-        add_values(:fq, fq)
-      end
-      alias_method :fq, :filter
-
-      def query(q)
-        add_params(q: q)
-      end
-      alias_method :q, :query
-
-      def fields(*fl)
-        add_params(fl: fl)
-      end
-      alias_method :fl, :fields
-
-      def start(offset)
-        add_params(start: offset.to_i)
-      end
-      alias_method :offset, :start
-
-      def rows(limit)
-        add_params(rows: limit.to_i)
-      end
-      alias_method :limit, :rows
-
-      def sort(crit)
-        add_params(sort: crit)
-      end
-
-      # @override
-      def each
-        return to_enum unless block_given?
-
-        pages.each do |page|
-          page.docs.each do |doc|
-            yield doc
-          end
-        end
-      end
-
-      def count
-        response['response']['numFound']
-      end
-      alias_method :num_found, :count
-
-      def docs
-        response['response']['docs']
       end
 
       # @override
@@ -89,13 +46,32 @@ module ROM
       private
 
       def cache
-        @cache ||= Solrbee::Cache.new
+        @cache ||= Cache.new
       end
 
-      def pages
-        PaginatedDataset.new(self)
-      end
+      class Cache
+        attr_reader :backend
 
+        def initialize
+          @backend = {}
+        end
+
+        def get(key)
+          backend[key]
+        end
+
+        def set(key, val)
+          backend[key] = val
+        end
+
+        def load(key, &block)
+          get(key) || set(key, block.call)
+        end
+
+        def flush
+          backend.clear
+        end
+      end
     end
   end
 end
