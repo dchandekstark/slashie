@@ -37,8 +37,3 @@ module Solrbee
   end
 
 end
-
-# require "solrbee/api"
-# require "solrbee/query"
-# require "solrbee/cursor"
-# require "solrbee/client"

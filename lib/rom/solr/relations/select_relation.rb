@@ -2,7 +2,7 @@ module ROM
   module Solr
     class SelectRelation < Relation
 
-      schema(:select, as: :search) { }
+      schemaless :select, as: :search
 
       def filter(*fq)
         add_param_values(:fq, fq)
@@ -33,12 +33,9 @@ module ROM
         add_params(sort: crit)
       end
 
+      # @override Don't have to enumerate to get count (may not be exact)
       def count
         dataset.num_found
-      end
-
-      def all
-        self
       end
 
     end

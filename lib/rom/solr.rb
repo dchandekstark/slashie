@@ -8,6 +8,8 @@ require_relative 'solr/datasets/select_dataset'
 
 require_relative 'solr/gateway'
 
+require_relative 'solr/schemaless'
+
 require_relative 'solr/relation'
 require_relative 'solr/relations/schema_relation'
 require_relative 'solr/relations/select_relation'

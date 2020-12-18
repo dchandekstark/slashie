@@ -16,12 +16,16 @@ module ROM
       config.default_request_handler = Request
 
       # @override Handles multiple path segments and nils
-      def with_path(*segments)
-        super segments.compact.join('/')
+      def with_path(segments)
+        s = Array.wrap(segments)
+        return self if s.empty?
+        with_options(path: s.compact.join('/'))
       end
 
-      def with_enum_on(*keys)
-        with_options(enum_on: keys.map(&:to_s))
+      def with_enum_on(keys)
+        k = Array.wrap(keys)
+        return self if k.empty?
+        with_options(enum_on: k)
       end
 
       # Coerce param value to an Array and set new value
@@ -31,12 +35,13 @@ module ROM
         add_params(key => new_val)
       end
 
-      # @override Removes new params having nil values and doesn't deep merge
-      def add_params(new_params)
-        with_params params.merge(new_params.compact)
+      # @override
+      def add_params(new_params = {})
+        return self if new_params.nil? || new_params.empty?
+        with_params params.merge(new_params).compact
       end
 
-      def default_params(defaults)
+      def default_params(defaults = {})
         with_params defaults.merge(params)
       end
 

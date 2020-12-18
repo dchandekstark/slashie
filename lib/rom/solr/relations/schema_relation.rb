@@ -2,7 +2,7 @@ module ROM
   module Solr
     class SchemaRelation < Relation
 
-      schema(:schema, as: :schema_info) { }
+      schemaless(:schema, as: :schema_info)
 
       # GET /schema
       def info
@@ -10,7 +10,7 @@ module ROM
       end
 
       def schema_name
-        with_path('name').fetch('name')
+        with_path(:name).fetch(:name)
       end
 
       def version
@@ -27,18 +27,25 @@ module ROM
 
       # @param opts [Hash]
       def fields(**opts)
-        with_path('fields').with_enum_on('fields').add_params(opts)
+        default_opts = { showDefaults: true }
+        with_path('fields')
+          .with_enum_on('fields')
+          .add_params(default_opts.merge(opts))
       end
 
       # @param name [String, Symbol] field name
       # @param opts [Hash]
       def field(name, **opts)
-        with_path('fields', name).add_params(opts).fetch('field')
+        with_path('fields', name)
+          .add_params(opts)
+          .fetch('field')
       end
 
       # @param opts [Hash]
       def field_types(**opts)
-        with_path('fieldtypes').with_enum_on('fieldTypes').add_params(opts)
+        with_path('fieldtypes')
+          .with_enum_on('fieldTypes')
+          .add_params(opts)
       end
 
       # @param name [String, Symbol] field type name

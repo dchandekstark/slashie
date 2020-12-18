@@ -1,18 +1,23 @@
 module ROM
   module Solr
     class Relation < ROM::HTTP::Relation
+      extend Schemaless
 
       adapter :solr
 
-      schema { }
-
-      # "schemaless" config - pass thru all tuples
-      option :output_schema, default: -> { NOOP_OUTPUT_SCHEMA }
-
       forward :add_param_values, :default_params, :with_enum_on
 
-      def fetch(*keys)
-        with_enum_on(*keys).first
+      def fetch(key, default = nil)
+        return self if key.nil?
+        dataset.response.fetch(key, default)
+      end
+
+      def count
+        to_enum.count
+      end
+
+      def all
+        self
       end
 
     end
