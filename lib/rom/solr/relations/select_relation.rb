@@ -1,15 +1,11 @@
-require 'rom/solr/cursor'
-
 module ROM
   module Solr
     class SelectRelation < Relation
 
-      schema(:select) do
-        attribute :id, ROM::Types::String
-      end
+      schema(:select, as: :search) { }
 
       def filter(*fq)
-        add_values(:fq, fq)
+        add_param_values(:fq, fq)
       end
       alias_method :fq, :filter
 
@@ -37,26 +33,12 @@ module ROM
         add_params(sort: crit)
       end
 
-      def sort?
-        dataset.param?(:sort)
-      end
-
       def count
         dataset.num_found
       end
 
       def all
-        query('*:*')
-      end
-
-      # @override
-      def each
-        return to_enum unless block_given?
-        cursor.each { |doc| yield(doc) }
-      end
-
-      def cursor
-        Cursor.new(dataset)
+        self
       end
 
     end

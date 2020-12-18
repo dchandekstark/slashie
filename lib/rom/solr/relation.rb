@@ -4,12 +4,15 @@ module ROM
 
       adapter :solr
 
-      forward :remove_params, :add_values, :default_params
+      schema { }
 
-      private
+      # "schemaless" config - pass thru all tuples
+      option :output_schema, default: -> { NOOP_OUTPUT_SCHEMA }
 
-      def response
-        dataset.response
+      forward :add_param_values, :default_params, :with_enum_on
+
+      def fetch(*keys)
+        with_enum_on(*keys).first
       end
 
     end

@@ -1,26 +1,39 @@
 require "solrbee/version"
+require "solrbee/array"
 require "rom/solr"
 
 module Solrbee
 
+  # Factory method
+  #
+  # @return [ROM::Solr::Gateway] a gateway instance
   def self.gateway
     ROM::Gateway.setup(:solr)
   end
 
-  # @return [Solrbee::Documents] a ROM relation
+  # Factory method
+  #
+  # @return [Solrbee::Documents] a ROM relation for searching
   def self.documents
-    container.relations[:select]
+    container.relations[:search]
+  end
+
+  def self.schema
+    container.relations[:schema_info]
   end
 
   # @return [ROM::Configuration] configuration
-  def self.configuration
-    ROM::Configuration.new(:solr) do |config|
-      config.register_relation(ROM::Solr::SelectRelation)
+  def self.config
+    @config ||= ROM::Configuration.new(:solr) do |config|
+      config.register_relation(
+        ROM::Solr::SelectRelation,
+        ROM::Solr::SchemaRelation
+      )
     end
   end
 
   def self.container
-    ROM.container(configuration)
+    ROM.container(config)
   end
 
 end
