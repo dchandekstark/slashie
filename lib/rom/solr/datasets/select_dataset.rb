@@ -15,7 +15,7 @@ module ROM
       end
 
       def num_found
-        response.dig('response', 'numFound')
+        response.response.numFound
       end
 
       def cursor_mark
@@ -23,7 +23,7 @@ module ROM
       end
 
       def next_cursor_mark
-        response['nextCursorMark']
+        response.nextCursorMark
       end
 
       def page_size

@@ -29,8 +29,20 @@ module ROM
       end
       alias_method :limit, :rows
 
+      def resort(crit)
+        params.delete(:sort)
+        sort(crit)
+      end
+
+      # sort(title: 'ASC', id: 'ASC')
       def sort(crit)
-        add_params(sort: crit)
+        sort_hash = params.fetch(:sort, '').split(/,\s*/).map(&:split).to_h
+                      .transform_keys(&:to_sym)
+                      .transform_values(&:upcase)
+        crit_hash = crit.transform_keys(&:to_sym).transform_values(&:upcase)
+        new_sort_hash = sort_hash.merge(crit_hash)
+        new_sort = new_sort_hash.to_a.map { |a| a.join(' ') }.join(', ')
+        add_params(sort: new_sort)
       end
 
       # @override Don't have to enumerate to get count (may not be exact)

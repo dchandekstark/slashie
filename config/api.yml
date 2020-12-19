@@ -1,13 +1,6 @@
-admin:
-  base_path: admin
-  api:
-    ping:
-      desc: GET /admin/ping
-      path: ping
-      fetch_key: status
-
 schema:
   base_path: schema
+  alias: schema_info
   api:
     info:
       desc: GET /schema
