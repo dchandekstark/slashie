@@ -1,7 +1,8 @@
 require 'rom-http'
 
-require_relative 'solr/request'
-require_relative 'solr/response'
+require_relative 'solr/request_handler'
+require_relative 'solr/response_handler'
+require_relative 'solr/handlers/mash_response_handler'
 
 require_relative 'solr/dataset'
 require_relative 'solr/datasets/select_dataset'

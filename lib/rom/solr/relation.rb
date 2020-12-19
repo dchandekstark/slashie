@@ -7,6 +7,8 @@ module ROM
 
       forward :add_param_values, :default_params, :with_enum_on
 
+      option :output_schema, default: ->{ NOOP_OUTPUT_SCHEMA }
+
       def fetch(key, default = nil)
         return self if key.nil?
         dataset.response.fetch(key, default)

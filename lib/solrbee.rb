@@ -1,5 +1,7 @@
 require "solrbee/version"
 require "solrbee/array"
+require "solrbee/mash"
+require "solrbee/api"
 require "rom/solr"
 
 module Solrbee

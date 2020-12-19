@@ -1,6 +1,6 @@
 module ROM
   module Solr
-    class Response
+    class ResponseHandler
 
       # @return [Hash] Parsed JSON object from Solr response body
       def self.call(response, dataset)

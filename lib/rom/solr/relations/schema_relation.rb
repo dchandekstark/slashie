@@ -4,70 +4,22 @@ module ROM
 
       schemaless(:schema, as: :schema_info)
 
-      # GET /schema
-      def info
-        fetch('schema')
-      end
+      Solrbee::Api.config.schema.api.each do |method, config|
+        method_name = config.method_name || method
 
-      def schema_name
-        with_path(:name).fetch(:name)
-      end
+        define_method(method_name) do |*args, **kwargs|
+          config_args = Array.wrap(config.args).map(&:to_sym)
+          args_hash = config_args.zip(args).to_h
 
-      def version
-        with_path('version').fetch('version')
-      end
+          params = config.params.to_h.merge(kwargs)
 
-      def unique_key
-        with_path('uniquekey').fetch('uniqueKey')
-      end
+          path = config.path ? config.path % args_hash : nil
 
-      def similarity
-        with_path('similarity').fetch('similarity')
-      end
-
-      # @param opts [Hash]
-      def fields(**opts)
-        default_opts = { showDefaults: true }
-        with_path('fields')
-          .with_enum_on('fields')
-          .add_params(default_opts.merge(opts))
-      end
-
-      # @param name [String, Symbol] field name
-      # @param opts [Hash]
-      def field(name, **opts)
-        with_path('fields', name)
-          .add_params(opts)
-          .fetch('field')
-      end
-
-      # @param opts [Hash]
-      def field_types(**opts)
-        with_path('fieldtypes')
-          .with_enum_on('fieldTypes')
-          .add_params(opts)
-      end
-
-      # @param name [String, Symbol] field type name
-      # @param opts [Hash]
-      def field_type(name, **opts)
-        with_path('fieldtypes', name).add_params(opts).fetch('fieldType')
-      end
-
-      # @param opts [Hash]
-      def dynamic_fields(**opts)
-        with_path('dynamicfields').with_enum_on('dynamicFields').add_params(opts)
-      end
-
-      # @param name [String, Symbol] dynamic field name
-      # @param opts [Hash]
-      def dynamic_field(name, **opts)
-        with_path('dynamicfields', name).add_params(opts).fetch('dynamicField')
-      end
-
-      # @param opts [Hash]
-      def copy_fields(**opts)
-        with_path('copyfields').with_enum_on('copyFields').add_params(opts)
+          with_path(path)
+            .with_enum_on(config.enum_on)
+            .add_params(params)
+            .fetch(config.fetch_key)
+        end
       end
 
     end

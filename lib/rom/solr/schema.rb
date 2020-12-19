@@ -1,8 +1,6 @@
 module ROM
   module Solr
-    class Schema < ROM::HTTP::Schema
-
-
+    class Schema < ROM::Schema
 
     end
   end

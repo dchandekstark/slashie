@@ -12,8 +12,8 @@ module ROM
       option :params, type: Types::Hash, default: ->{ self.class.default_params }
 
       # Request and response handlers
-      config.default_response_handler = Response
-      config.default_request_handler = Request
+      config.default_response_handler = MashResponseHandler
+      config.default_request_handler = RequestHandler
 
       # @override Handles multiple path segments and nils
       def with_path(segments)

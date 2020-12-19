@@ -1,6 +1,6 @@
 module ROM
   module Solr
-    class Request
+    class RequestHandler
 
       def self.call(dataset)
         uri = URI(dataset.uri)
