@@ -1,27 +1,25 @@
 schema:
   base_path: schema
-  alias: schema_info
-  api:
+  methods:
     info:
       desc: GET /schema
-      fetch_key: schema
-    name:
+      enum_on: schema
+    schema_name:
       desc: GET /schema/name
-      method_name: schema_name
       path: name
-      fetch_key: name
+      enum_on: name
     version:
       desc: GET /schema/version
       path: version
-      fetch_key: version
+      enum_on: version
     unique_key:
       desc: GET /schema/uniquekey
       path: uniquekey
-      fetch_key: uniqueKey
+      enum_on: uniqueKey
     similarity:
       desc: GET /schema/similarity
       path: similarity
-      fetch_key: similarity
+      enum_on: similarity
     fields:
       desc: GET /schema/fields
       path: fields
@@ -35,7 +33,7 @@ schema:
         - name
       params:
         showDefaults: true
-      fetch_key: field
+      enum_on: field
     field_types:
       desc: GET /schema/fieldtypes
       path: fieldtypes
@@ -45,7 +43,7 @@ schema:
       path: fieldtypes/%{name}
       args:
         - name
-      fetch_key: fieldType
+      enum_on: fieldType
     dynamic_fields:
       desc: GET /schema/dynamicfields
       path: dynamicfields
@@ -55,7 +53,7 @@ schema:
       args:
         - name
       path: dynamicfields/%{name}
-      fetch_key: dynamicField
+      enum_on: dynamicField
     copy_fields:
       desc: GET /schema/copyfields
       path: copyfields

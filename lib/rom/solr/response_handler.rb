@@ -4,7 +4,7 @@ module ROM
 
       # @return [Hash] Parsed JSON object from Solr response body
       def self.call(response, dataset)
-        JSON.parse(response.body)
+        Array.wrap JSON.parse(response.body)
       end
 
     end

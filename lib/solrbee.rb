@@ -24,18 +24,29 @@ module Solrbee
     container.relations[:schema_info]
   end
 
-  # @return [ROM::Configuration] configuration
-  def self.config
-    @config ||= ROM::Configuration.new(:solr) do |config|
-      config.register_relation(
-        ROM::Solr::SelectRelation,
-        ROM::Solr::SchemaRelation
-      )
-    end
+  def self.api
+    @api ||= YAML.load_file(File.expand_path('../../config/api.yml', __FILE__))
   end
 
   def self.container
-    ROM.container(config)
+    @container ||= ROM.container(:solr) do |rom|
+      rom.relation(:schema) do
+        schema(:schema, as: :schema_info) { }
+        auto_map false
+        option :output_schema, default: ->{ ROM::Relation::NOOP_OUTPUT_SCHEMA }
+
+        Solrbee.api['schema']['methods'].each do |name, config|
+          next if method_defined?(name) && !!config['override']
+
+          define_method(name) do |*args, **kwargs|
+            args_hash = config['args'].to_a.map(&:to_sym).zip(args).to_h
+            params = config['params'].to_h.merge(kwargs)
+            path = config.key?('path') ? config['path'] % args_hash : nil
+            with_path(path).add_params(params)
+          end
+        end
+      end
+    end
   end
 
 end

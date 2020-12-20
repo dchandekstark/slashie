@@ -2,7 +2,9 @@ module ROM
   module Solr
     class SelectRelation < Relation
 
-      schemaless :select, as: :search
+      schema :select, as: :search do
+        # no schema
+      end
 
       def filter(*fq)
         add_param_values(:fq, fq)
