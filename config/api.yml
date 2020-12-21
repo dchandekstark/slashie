@@ -1,31 +1,30 @@
-schema:
-  base_path: schema
+schema_info:
   methods:
     info:
       desc: GET /schema
-      enum_on: schema
+      response_key: schema
     schema_name:
       desc: GET /schema/name
       path: name
-      enum_on: name
+      response_key: name
     version:
       desc: GET /schema/version
       path: version
-      enum_on: version
+      response_key: version
     unique_key:
       desc: GET /schema/uniquekey
       path: uniquekey
-      enum_on: uniqueKey
+      response_key: uniqueKey
     similarity:
       desc: GET /schema/similarity
       path: similarity
-      enum_on: similarity
+      response_key: similarity
     fields:
       desc: GET /schema/fields
       path: fields
       params:
         showDefaults: true
-      enum_on: fields
+      response_key: fields
     field:
       desc: GET /schema/fields/[name]
       path: fields/%{name}
@@ -33,28 +32,28 @@ schema:
         - name
       params:
         showDefaults: true
-      enum_on: field
+      response_key: field
     field_types:
       desc: GET /schema/fieldtypes
       path: fieldtypes
-      enum_on: fieldTypes
+      response_key: fieldTypes
     field_type:
       desc: GET /schema/fieldtype/[name]
       path: fieldtypes/%{name}
       args:
         - name
-      enum_on: fieldType
+      response_key: fieldType
     dynamic_fields:
       desc: GET /schema/dynamicfields
       path: dynamicfields
-      enum_on: dynamicFields
+      response_key: dynamicFields
     dynamic_field:
       desc: GET /schema/dynamicfields/[name]
       args:
         - name
       path: dynamicfields/%{name}
-      enum_on: dynamicField
+      response_key: dynamicField
     copy_fields:
       desc: GET /schema/copyfields
       path: copyfields
-      enum_on: copyFields
+      response_key: copyFields

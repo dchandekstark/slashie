@@ -15,7 +15,7 @@ module ROM
       end
 
       def dataset_class(name)
-        prefix = name.to_s.split(/_/).map(&:capitalize).join('')
+        prefix = name.to_s.split(/[_\/]/).map(&:capitalize).join('')
         const_name = "#{prefix}Dataset"
         ROM::Solr.const_defined?(const_name, false) ? ROM::Solr.const_get(const_name, false) : Dataset
       end

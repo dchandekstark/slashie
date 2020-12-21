@@ -1,7 +1,6 @@
 require "solrbee/version"
 require "solrbee/array"
-require "solrbee/mash"
-require "solrbee/api"
+
 require "rom/solr"
 
 module Solrbee
@@ -15,12 +14,15 @@ module Solrbee
 
   # Factory method
   #
-  # @return [Solrbee::Documents] a ROM relation for searching
-  def self.documents
+  # @return [ROM::Solr::SelectRelation] a relation for searching
+  def self.search
     container.relations[:search]
   end
 
-  def self.schema
+  # Factory method
+  #
+  # @return [ROM::Solr::SchemaInfoRelation] a relation for schema info
+  def self.schema_info
     container.relations[:schema_info]
   end
 
@@ -29,24 +31,7 @@ module Solrbee
   end
 
   def self.container
-    @container ||= ROM.container(:solr) do |rom|
-      rom.relation(:schema) do
-        schema(:schema, as: :schema_info) { }
-        auto_map false
-        option :output_schema, default: ->{ ROM::Relation::NOOP_OUTPUT_SCHEMA }
-
-        Solrbee.api['schema']['methods'].each do |name, config|
-          next if method_defined?(name) && !!config['override']
-
-          define_method(name) do |*args, **kwargs|
-            args_hash = config['args'].to_a.map(&:to_sym).zip(args).to_h
-            params = config['params'].to_h.merge(kwargs)
-            path = config.key?('path') ? config['path'] % args_hash : nil
-            with_path(path).add_params(params)
-          end
-        end
-      end
-    end
+    ROM.container(ROM::Solr.configuration)
   end
 
 end
