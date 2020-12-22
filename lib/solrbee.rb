@@ -1,5 +1,4 @@
 require "solrbee/version"
-require "solrbee/array"
 
 require "rom/solr"
 
@@ -23,11 +22,7 @@ module Solrbee
   #
   # @return [ROM::Solr::SchemaInfoRelation] a relation for schema info
   def self.schema_info
-    container.relations[:schema_info]
-  end
-
-  def self.api
-    @api ||= YAML.load_file(File.expand_path('../../config/api.yml', __FILE__))
+    ROM::Solr::SchemaInfo.new(container)
   end
 
   def self.container

@@ -1,18 +1,20 @@
 module ROM
   module Solr
     class Relation < ROM::HTTP::Relation
-      adapter :solr
+      extend QueryParam
+      extend PathMethod
 
-      forward :add_param_values, :default_params
+      adapter :solr
 
       option :output_schema, default: ->{ NOOP_OUTPUT_SCHEMA }
 
+      forward :add_param_values, :default_params
+
+      query_param :wt
+      query_param :fl
+
       def count
         to_enum.count
-      end
-
-      def all
-        self
       end
 
     end

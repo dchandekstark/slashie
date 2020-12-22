@@ -1,59 +1,22 @@
-schema_info:
-  methods:
-    info:
-      desc: GET /schema
-      response_key: schema
-    schema_name:
-      desc: GET /schema/name
-      path: name
-      response_key: name
-    version:
-      desc: GET /schema/version
-      path: version
-      response_key: version
-    unique_key:
-      desc: GET /schema/uniquekey
-      path: uniquekey
-      response_key: uniqueKey
-    similarity:
-      desc: GET /schema/similarity
-      path: similarity
-      response_key: similarity
-    fields:
-      desc: GET /schema/fields
-      path: fields
-      params:
-        showDefaults: true
-      response_key: fields
-    field:
-      desc: GET /schema/fields/[name]
-      path: fields/%{name}
-      args:
-        - name
-      params:
-        showDefaults: true
-      response_key: field
     field_types:
-      desc: GET /schema/fieldtypes
       path: fieldtypes
-      response_key: fieldTypes
+      key: fieldTypes
     field_type:
       desc: GET /schema/fieldtype/[name]
       path: fieldtypes/%{name}
       args:
         - name
-      response_key: fieldType
+      key: fieldType
     dynamic_fields:
       desc: GET /schema/dynamicfields
       path: dynamicfields
-      response_key: dynamicFields
+      key: dynamicFields
     dynamic_field:
       desc: GET /schema/dynamicfields/[name]
       args:
         - name
       path: dynamicfields/%{name}
-      response_key: dynamicField
+      key: dynamicField
     copy_fields:
-      desc: GET /schema/copyfields
       path: copyfields
-      response_key: copyFields
+      key: copyFields
