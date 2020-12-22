@@ -8,16 +8,37 @@ module ROM
         # no schema
       end
 
-      query_param :show_defaults, param: :showDefaults, default: true
-      query_param :include_dynamic, param: :includeDynamic, default: true
+      query_param :show_defaults,
+                  param: :showDefaults,
+                  type: Types::Bool.default(true)
 
-      def field(name)
-        with_path("fields/#{name}")
+      query_param :include_dynamic,
+                  param: :includeDynamic,
+                  type: Types::Bool.default(true)
+
+      def copy_fields;    with_path(:copyfields);    end
+      def schema_name;    with_path(:name);          end
+      def similarity;     with_path(:similarity);    end
+      def unique_key;     with_path(:uniquekey);     end
+      def version;        with_path(:version);       end
+
+      def fields(name = nil)
+        path = "fields"
+        path += "/#{name}" if name
+        with_path(path)
       end
 
-      path_method :field_types, path: :fieldtypes
-      path_method :copy_fields, path: :copyfields
-      path_method :dynamic_fields, path: :dynamicfields
+      def dynamic_fields(name = nil)
+        path = "dynamicfields"
+        path += "/#{name}" if name
+        with_path(path)
+      end
+
+      def field_types(name = nil)
+        path = "fieldtypes"
+        path += "/#{name}" if name
+        with_path(path)
+      end
 
     end
   end

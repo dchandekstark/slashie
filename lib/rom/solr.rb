@@ -32,15 +32,11 @@ module ROM
       @configuration ||= ROM::Configuration.new(:solr) do |config|
         config.register_relation(SelectRelation)
         config.register_relation(SchemaInfoRelation)
-
-        # config.relation(:schema_info) do
-        #   schema(:schema, as: :schema_info) { }
-        # end
-
-        # config.relation(:schema_fields) do
-        #   schema('schema/fields', as: :schema_fields
-        # end
       end
+    end
+
+    module Types
+      include ROM::HTTP::Types
     end
 
   end

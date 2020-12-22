@@ -18,8 +18,8 @@ module ROM
 
       # Coerce param value to an Array and set new value
       # to set union with other Array of values.
-      def add_param_values(key, val)
-        new_val = Array.wrap(params[key]) | Array.wrap(val)
+      def add_param_value(key, val)
+        new_val = Array.wrap(params[key]).append(val).flatten.compact.uniq
         add_params(key => new_val)
       end
 
