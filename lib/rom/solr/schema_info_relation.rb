@@ -8,12 +8,12 @@ module ROM
         # no schema
       end
 
-      query_param :show_defaults,
-                  param: :showDefaults,
+      query_param :showDefaults,
+                  :show_defaults,
                   type: Types::Bool.default(true)
 
-      query_param :include_dynamic,
-                  param: :includeDynamic,
+      query_param :includeDynamic,
+                  :include_dynamic,
                   type: Types::Bool.default(true)
 
       def copy_fields;    with_path(:copyfields);    end

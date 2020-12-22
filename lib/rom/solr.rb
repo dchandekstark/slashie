@@ -28,13 +28,6 @@ require_relative 'solr/schema_info'
 module ROM
   module Solr
 
-    def self.configuration
-      @configuration ||= ROM::Configuration.new(:solr) do |config|
-        config.register_relation(SelectRelation)
-        config.register_relation(SchemaInfoRelation)
-      end
-    end
-
     module Types
       include ROM::HTTP::Types
     end

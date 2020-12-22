@@ -15,86 +15,49 @@ module ROM
         SelectCursor.new(self).each(&block)
       end
 
-      query_param :q
+      query_param :q, :query
 
-      query_param :fq, repeatable: true
+      query_param :fq, :filter_query
 
-      query_param :fl, repeatable: true
+      query_param :fl, :field_list
 
       query_param :cache, type: Types::Bool
 
-      query_param :segment_terminate_early,
-                  param: :segmentTerminateEarly,
+      query_param :segmentTerminateEarly, :segment_terminate_early,
                   type: Types::Bool.default(true)
 
-      query_param :time_allowed,
-                  param: :timeAllowed,
+      query_param :timeAllowed, :time_allowed,
                   type: Types::Coercible::Integer
 
-      query_param :explain_other,
-                  param: :explainOther
+      query_param :explainOther, :explain_other
 
-      query_param :omit_header,
-                  param: :omitHeader,
+      query_param :omitHeader, :omit_header,
                   type: Types::Bool.default(true)
 
       query_param :start, type: Types::Coercible::Integer
 
-      query_param :sort
+      query_param :sort, :offset
 
-      query_param :rows, type: Types::Coercible::Integer
+      query_param :rows, :limit,
+                  type: Types::Coercible::Integer
 
-      query_param :def_type,
-                  param: :defType,
+      query_param :defType, :def_type,
                   type: Types::Coercible::String
 
       query_param :debug,
                   type: Types::Coercible::String
                     .enum('query', 'timing', 'results', 'all', 'true')
 
-      query_param :echo_params,
-                  param: :echoParams,
+      query_param :echoParams, :echo_params,
                   type: Types::Coercible::String
                     .default('explicit'.freeze)
                     .enum('explicit', 'all', 'none')
 
-      query_param :min_exact_count,
-                  param: :minExactCount,
+      query_param :minExactCount, :min_exact_count,
                   type: Types::Coercible::Integer
 
-      def filter(*fq)
-        add_param_values(:fq, fq)
-      end
-      alias_method :fq, :filter
-
-      def query(q)
-        add_params(q: q)
-      end
-      alias_method :q, :query
-
-      def fields(*fl)
-        add_params(fl: fl)
-      end
-      alias_method :fl, :fields
-
-      def start(offset)
-        add_params(start: offset.to_i)
-      end
-      alias_method :offset, :start
-
-      def rows(limit)
-        add_params(rows: limit.to_i)
-      end
-      alias_method :limit, :rows
-
-      # sort('title ASC', 'id ASC')
-      def sort(*criteria)
-        add_params(sort: criteria.join(','))
-      end
-
-      def resort(*criteria)
-        params.delete(:sort)
-        sort(*criteria)
+      def all
+        q('*:*')
       end
 
       # @override Don't have to enumerate to get count (may not be exact)

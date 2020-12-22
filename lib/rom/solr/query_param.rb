@@ -10,27 +10,14 @@ module ROM
     # class MyRelation < ROM::Solr::Relation
     #   extend ROM::Solr::QueryParam
     #
-    #   query_param :include_dynamic, param: :includeDynamic, type: Types::Bool.default(true)
+    #   query_param :includeDynamic, as: :include_dynamic, type: Types::Bool.default(true)
     # end
     #
     module QueryParam
 
-      def query_param(name, param: nil, type: Types::String, repeatable: nil)
-        __param__ = ( param || name ).to_sym
-
-        meth = Proc.new do |value = nil|
-          __value__ = type[value]
-
-          if params.key?(__param__)
-            raise "The query parameter `#{__param__}' is not repeatable." if !repeatable
-
-            add_param_value(__param__, __value__)
-          else
-            add_params(__param__ => __value__)
-          end
-        end
-
-        define_method(name, meth)
+      def query_param(param, as = nil, type: Types::String)
+        define_method param, ->(value) { add_params(param => type[value]) }
+        alias_method as, param unless as.nil?
       end
 
     end

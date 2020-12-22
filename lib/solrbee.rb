@@ -25,8 +25,15 @@ module Solrbee
     ROM::Solr::SchemaInfo.new(container)
   end
 
+  def self.configuration
+    @configuration ||= ROM::Configuration.new(:solr) do |config|
+      config.register_relation(ROM::Solr::SelectRelation)
+      config.register_relation(ROM::Solr::SchemaInfoRelation)
+    end
+  end
+
   def self.container
-    ROM.container(ROM::Solr.configuration)
+    ROM.container(configuration)
   end
 
 end

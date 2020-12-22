@@ -11,8 +11,7 @@ module ROM
 
       query_param :wt, type: Types::Coercible::String
 
-      query_param :log_params_list,
-                  param: :logParamsList,
+      query_param :logParamsList, :log_params_list,
                   type: Types::String.optional
 
       def count
