@@ -6,34 +6,25 @@ module Solrbee
 
   # Factory method
   #
-  # @return [ROM::Solr::Gateway] a gateway instance
-  def self.gateway
-    ROM::Gateway.setup(:solr)
-  end
-
-  # Factory method
-  #
   # @return [ROM::Solr::SelectRelation] a relation for searching
   def self.search
-    container.relations[:search]
+    rom = container { |config| config.register_relation(ROM::Solr::SearchRelation) }
+    ROM::Solr::SearchRepo.new(rom)
   end
 
   # Factory method
   #
   # @return [ROM::Solr::SchemaInfoRelation] a relation for schema info
   def self.schema_info
-    ROM::Solr::SchemaInfo.new(container)
-  end
-
-  def self.configuration
-    @configuration ||= ROM::Configuration.new(:solr) do |config|
-      config.register_relation(ROM::Solr::SelectRelation)
-      config.register_relation(ROM::Solr::SchemaInfoRelation)
-    end
+    rom = container { |config| config.register_relation(ROM::Solr::SchemaInfoRelation) }
+    ROM::Solr::SchemaInfoRepo.new(rom)
   end
 
   def self.container
-    ROM.container(configuration)
+    ROM.container(:solr,
+                  uri: ENV.fetch('SOLR_URL', 'http://localhost:8983/solr'),
+                  headers: { Accept: 'application/json' }
+                 )
   end
 
 end

@@ -1,26 +1,28 @@
+require 'rom/solr/path_method'
+
 module ROM
   module Solr
     class SchemaInfoRelation < Relation
 
       auto_struct false
 
-      schema(:schema, as: :schema_info) do
-        # no schema
+      schema(:schema, as: :schema_info) { }
+
+      query_param :showDefaults, :show_defaults,
+                  type: Types::Bool.default(true)
+
+      query_param :includeDynamic, :include_dynamic,
+                  type: Types::Bool.default(true)
+
+      path_method :copyfields,    as: :copy_fields
+      path_method :dynamicfields, as: :dynamic_fields
+      path_method :similarity
+      path_method :uniquekey,     as: :unique_key
+      path_method :version
+
+      def schema_name
+        with_path(:name)
       end
-
-      query_param :showDefaults,
-                  :show_defaults,
-                  type: Types::Bool.default(true)
-
-      query_param :includeDynamic,
-                  :include_dynamic,
-                  type: Types::Bool.default(true)
-
-      def copy_fields;    with_path(:copyfields);    end
-      def schema_name;    with_path(:name);          end
-      def similarity;     with_path(:similarity);    end
-      def unique_key;     with_path(:uniquekey);     end
-      def version;        with_path(:version);       end
 
       def fields(name = nil)
         path = "fields"

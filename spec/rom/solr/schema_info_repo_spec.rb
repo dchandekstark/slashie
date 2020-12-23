@@ -1,5 +1,5 @@
 module ROM::Solr
-  RSpec.describe SchemaInfo do
+  RSpec.describe SchemaInfoRepo do
 
     let(:schema_info) { described_class.new(container) }
 
@@ -15,6 +15,7 @@ module ROM::Solr
     its(:dynamic_fields) { is_expected.to be_a Array }
     its(:field_types) { is_expected.to be_a Array }
     its(:fields) { is_expected.to be_a Array }
+    its(:info) { is_expected.to be_a Hash }
     its(:schema_name) { is_expected.to eq 'default-config' }
     its(:similarity) { is_expected.to be_a Hash }
     its(:unique_key) { is_expected.to eq 'id' }

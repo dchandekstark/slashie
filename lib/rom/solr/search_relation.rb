@@ -1,12 +1,10 @@
 module ROM
   module Solr
-    class SelectRelation < Relation
+    class SearchRelation < Relation
 
       auto_struct false
 
-      schema :select, as: :search do
-        # no schema
-      end
+      schema(:select, as: :search) { }
 
       # @override
       def each(&block)

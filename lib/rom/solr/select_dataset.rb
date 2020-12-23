@@ -9,11 +9,11 @@ module ROM
       end
 
       def docs
-        response[0].dig('response', 'docs')
+        response[0].dig(:response, :docs)
       end
 
       def num_found
-        response[0].dig('response', 'numFound')
+        response[0].dig(:response, :numFound)
       end
 
       def cursor_mark
@@ -21,7 +21,7 @@ module ROM
       end
 
       def next_cursor_mark
-        response[0]['nextCursorMark']
+        response[0][:nextCursorMark]
       end
 
     end
