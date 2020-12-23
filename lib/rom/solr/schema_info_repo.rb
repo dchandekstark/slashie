@@ -1,36 +1,43 @@
 module ROM
   module Solr
     class SchemaInfoRepo < Repository[:schema_info]
-      extend ResponseValue
 
       auto_struct false
 
-      response_value :copy_fields,    key: :copyFields
-      response_value :dynamic_fields, key: :dynamicFields
-      response_value :fields
-      response_value :field_types,    key: :fieldTypes
-      response_value :similarity
-      response_value :unique_key,     key: :uniqueKey
-      response_value :version
+      %i[ schema_name similarity unique_key version ].each do |name|
+        define_method name, ->{ root.send(name).one! }
+      end
 
       def info
-        root.one[:schema]
+        root.info.one!
       end
 
-      def schema_name
-        root.with_path(:name).one[:name]
+      def fields(dynamic: true, defaults: true)
+        root.fields.show_defaults(defaults).include_dynamic(dynamic)
       end
 
-      def field_type(name)
-        root.field_types(name).one[:fieldType]
+      def field(name, defaults: true)
+        root.field(name).show_defaults(defaults).one
       end
 
-      def field(name)
-        root.fields(name).show_defaults(true).one[:field]
+      def field_types(defaults: true)
+        root.field_types.show_defaults(defaults)
       end
 
-      def dynamic_field(name)
-        root.dynamic_fields(name).one[:dynamicField]
+      def field_type(name, defaults: true)
+        root.field_type(name).show_defaults(defaults).one
+      end
+
+      def dynamic_fields
+        root.dynamic_fields
+      end
+
+      def dynamic_field(name, defaults: true)
+        root.dynamic_field(name).show_defaults(defaults).one
+      end
+
+      def copy_fields
+        root.copy_fields
       end
 
     end

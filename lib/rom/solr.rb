@@ -3,9 +3,6 @@ require 'rom-http'
 # Utilities
 require_relative 'solr/array'
 require_relative 'solr/select_cursor'
-require_relative 'solr/response_value'
-require_relative 'solr/query_param'
-require_relative 'solr/path_method'
 
 # Handlers
 require_relative 'solr/request_handler'

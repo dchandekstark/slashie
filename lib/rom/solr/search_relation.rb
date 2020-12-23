@@ -13,46 +13,74 @@ module ROM
         SelectCursor.new(self).each(&block)
       end
 
-      query_param :q, :query
+      def q(query)
+        add_params(q: Types::String[query])
+      end
+      alias_method :query, :q
 
-      query_param :fq, :filter_query
+      def fq(*filter)
+        add_params(fq: filter)
+      end
+      alias_method :filter, :fq
 
-      query_param :fl, :field_list
+      def fl(*fields)
+        add_params(fl: fields.join(','))
+      end
+      alias_method :fields, :fl
 
-      query_param :cache, type: Types::Bool
+      def cache(enabled = true)
+        add_params(cache: Types::Bool[enabled])
+      end
 
-      query_param :segmentTerminateEarly, :segment_terminate_early,
-                  type: Types::Bool.default(true)
+      def segment_terminate_early(enabled = true)
+        add_params(segmentTerminateEarly: Types::Bool[enabled])
+      end
 
-      query_param :timeAllowed, :time_allowed,
-                  type: Types::Coercible::Integer
+      def time_allowed(millis)
+        add_params(timeAllowed: Types::Coercible::Integer[millis])
+      end
 
-      query_param :explainOther, :explain_other
+      def explain_other(query)
+        add_params(explainOther: Types::String[query])
+      end
 
-      query_param :omitHeader, :omit_header,
-                  type: Types::Bool.default(true)
+      def omit_header(omit = true)
+        add_params(omitHeader: Types::Bool[omit])
+      end
 
-      query_param :start, type: Types::Coercible::Integer
+      def start(offset)
+        add_params(start: Types::Coercible::Integer[offset])
+      end
 
-      query_param :sort, :offset
+      def sort(*criteria)
+        add_params(sort: criteria.join(','))
+      end
 
-      query_param :rows, :limit,
-                  type: Types::Coercible::Integer
+      def rows(num)
+        add_params(rows: Types::Coercible::Integer[num])
+      end
+      alias_method :limit, :rows
 
-      query_param :defType, :def_type,
-                  type: Types::Coercible::String
+      def def_type(value)
+        add_params(defType: Types::Coercible::String[value])
+      end
 
-      query_param :debug,
-                  type: Types::Coercible::String
-                    .enum('query', 'timing', 'results', 'all', 'true')
+      def debug(setting)
+        type = Types::Coercible::String
+                 .enum('query', 'timing', 'results', 'all', 'true')
+        add_params(debug: type[setting])
+      end
 
-      query_param :echoParams, :echo_params,
-                  type: Types::Coercible::String
-                    .default('explicit'.freeze)
-                    .enum('explicit', 'all', 'none')
+      def echo_params(setting)
+        type = Types::Coercible::String
+                 .default('explicit'.freeze)
+                 .enum('explicit', 'all', 'none')
+        add_params(echoParams: type[setting])
+      end
 
-      query_param :minExactCount, :min_exact_count,
-                  type: Types::Coercible::Integer
+      def min_exact_count(num)
+        add_params(minExactCount: Types::Coercible::Integer[num])
+      end
 
       def all
         q('*:*')

@@ -2,34 +2,25 @@ module ROM
   module Solr
     class Dataset < ROM::HTTP::Dataset
 
-      # Request and response handlers
-      config.default_response_handler = ResponseHandler
-      config.default_request_handler = RequestHandler
+      setting :default_data_path, reader: true
 
-      # # @override Handles nil
-      # def with_path(path)
-      #   return self if path.nil?
-      #   super
-      # end
-
-      # Coerce param value to an Array and set new value
-      # to set union with other Array of values.
-      def add_param_value(key, val)
-        new_val = Array.wrap(params[key]).append(val).flatten.compact.uniq
-        add_params(key => new_val)
+      configure do |config|
+        config.default_response_handler = ResponseHandler
+        config.default_request_handler  = RequestHandler
       end
 
-      # # @override
-      # def add_params(new_params = {})
-      #   return self if new_params.nil? || new_params.empty?
-      #   with_params params.merge(new_params).compact
-      # end
+      option :data_path, default: proc { self.class.default_data_path }
 
-      # # @override Seems good to have no-op when params not changed?
-      # def with_params(new_params)
-      #   return self if params == new_params
-      #   with_options(params: new_params)
-      # end
+      # @override
+      def each(&block)
+        return to_enum unless block_given?
+
+        enumerable_data.each(&block)
+      end
+
+      def with_data_path(*path)
+        with_options(data_path: path)
+      end
 
       # Copies and makes private superclass #response method
       alias_method :__response__, :response
@@ -41,6 +32,10 @@ module ROM
       end
 
       private
+
+      def enumerable_data
+        Array.wrap(data_path ? response.dig(*data_path) : response)
+      end
 
       def cache
         @cache ||= Concurrent::Map.new

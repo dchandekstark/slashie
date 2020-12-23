@@ -21,7 +21,9 @@ module ROM
 
         while true
           dataset.each(&block)
+
           break if last_page?
+
           move_cursor
         end
       end

@@ -11,10 +11,10 @@ module ROM::Solr
 
     subject { schema_info }
 
-    its(:copy_fields) { is_expected.to be_a Array }
-    its(:dynamic_fields) { is_expected.to be_a Array }
-    its(:field_types) { is_expected.to be_a Array }
-    its(:fields) { is_expected.to be_a Array }
+    its(:copy_fields) { is_expected.to be_a SchemaInfoRelation }
+    its(:dynamic_fields) { is_expected.to be_a SchemaInfoRelation }
+    its(:field_types) { is_expected.to be_a SchemaInfoRelation }
+    its(:fields) { is_expected.to be_a SchemaInfoRelation }
     its(:info) { is_expected.to be_a Hash }
     its(:schema_name) { is_expected.to eq 'default-config' }
     its(:similarity) { is_expected.to be_a Hash }

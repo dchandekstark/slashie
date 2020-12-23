@@ -2,18 +2,12 @@ module ROM
   module Solr
     class SelectDataset < Dataset
 
-      # @override
-      def each(&block)
-        return to_enum unless block_given?
-        docs.each(&block)
-      end
-
-      def docs
-        response[0].dig(:response, :docs)
+      configure do |config|
+        config.default_data_path = [:response, :docs]
       end
 
       def num_found
-        response[0].dig(:response, :numFound)
+        response.dig(:response, :numFound)
       end
 
       def cursor_mark
@@ -21,7 +15,7 @@ module ROM
       end
 
       def next_cursor_mark
-        response[0][:nextCursorMark]
+        response[:nextCursorMark]
       end
 
     end
