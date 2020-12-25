@@ -3,7 +3,7 @@ module ROM
     class SelectDataset < Dataset
 
       configure do |config|
-        config.default_data_path = [:response, :docs]
+        config.default_response_key = [:response, :docs]
       end
 
       def num_found

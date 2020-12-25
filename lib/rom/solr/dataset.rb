@@ -2,14 +2,14 @@ module ROM
   module Solr
     class Dataset < ROM::HTTP::Dataset
 
-      setting :default_data_path, reader: true
+      setting :default_response_key, reader: true
 
       configure do |config|
         config.default_response_handler = ResponseHandler
         config.default_request_handler  = RequestHandler
       end
 
-      option :data_path, default: proc { self.class.default_data_path }
+      option :response_key, default: proc { self.class.default_response_key }
 
       # @override
       def each(&block)
@@ -18,8 +18,8 @@ module ROM
         enumerable_data.each(&block)
       end
 
-      def with_data_path(*path)
-        with_options(data_path: path)
+      def with_response_key(*path)
+        with_options(response_key: path)
       end
 
       # Copies and makes private superclass #response method
@@ -34,7 +34,7 @@ module ROM
       private
 
       def enumerable_data
-        Array.wrap(data_path ? response.dig(*data_path) : response)
+        Array.wrap(response_key ? response.dig(*response_key) : response)
       end
 
       def cache

@@ -2,7 +2,7 @@ module ROM
   module Solr
     class RequestHandler
 
-      def self.call(dataset)
+      def self.call(dataset, &block)
         uri = URI(dataset.uri)
         uri.query = URI.encode_www_form(dataset.params)
 
@@ -15,6 +15,8 @@ module ROM
         dataset.headers.each_with_object(request) do |(header, value), request|
           request[header.to_s] = value
         end
+
+        yield request if block_given?
 
         http.request(request)
       end

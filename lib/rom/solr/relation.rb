@@ -4,7 +4,7 @@ module ROM
 
       adapter :solr
 
-      forward :with_data_path
+      forward :with_response_key
 
       option :output_schema, default: ->{ NOOP_OUTPUT_SCHEMA }
 

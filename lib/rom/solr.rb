@@ -6,11 +6,13 @@ require_relative 'solr/select_cursor'
 
 # Handlers
 require_relative 'solr/request_handler'
+require_relative 'solr/update_request_handler'
 require_relative 'solr/response_handler'
 
 # Datasets
 require_relative 'solr/dataset'
 require_relative 'solr/select_dataset'
+require_relative 'solr/update_dataset'
 
 # Gateway
 require_relative 'solr/gateway'
