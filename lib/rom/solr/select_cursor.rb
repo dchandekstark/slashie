@@ -5,10 +5,10 @@ module ROM
     class SelectCursor < SimpleDelegator
 
       def initialize(relation)
-        params = { cursorMark: '*', start: nil }
+        params = { cursorMark: '*' }
 
         # Sort must include a sort on unique key (id).
-        sort = relation.params[:sort]
+        sort = relation.dataset.params[:sort]
         unless /\bid\b/ =~ sort
           params[:sort] = Array.wrap(sort).append('id ASC').join(',')
         end

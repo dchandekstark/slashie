@@ -4,12 +4,17 @@ module ROM
 
       setting :default_response_key, reader: true
 
+      setting :default_headers, reader: true
+
       configure do |config|
         config.default_response_handler = ResponseHandler
         config.default_request_handler  = RequestHandler
+        config.default_headers = { Accept: 'application/json' }
       end
 
       option :response_key, default: proc { self.class.default_response_key }
+
+      option :headers, type: Types::Hash, default: proc { self.class.default_headers }
 
       # @override
       def each(&block)

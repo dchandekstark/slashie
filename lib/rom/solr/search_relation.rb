@@ -13,6 +13,10 @@ module ROM
         SelectCursor.new(self).each(&block)
       end
 
+      def by_unique_key(id)
+        q('id:%s' % id)
+      end
+
       def q(query)
         add_params(q: Types::String[query])
       end
