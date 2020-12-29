@@ -10,18 +10,18 @@ module Solrbee
 
   # Factory method
   #
-  # @return [ROM::Solr::SelectRelation] a relation for searching
-  def self.search
-    rom = container { |config| config.register_relation(ROM::Solr::SearchRelation) }
+  # @return [ROM::Solr::Documents] a relation for searching
+  def self.documents
+    rom = container { |config| config.register_relation(ROM::Solr::Documents) }
 
-    ROM::Solr::SearchRepo.new(rom)
+    ROM::Solr::DocumentRepo.new(rom)
   end
 
   # Factory method
   #
-  # @return [ROM::Solr::SchemaInfoRelation] a relation for schema info
+  # @return [ROM::Solr::SchemaInfo] a relation for schema info
   def self.schema_info
-    rom = container { |config| config.register_relation(ROM::Solr::SchemaInfoRelation) }
+    rom = container { |config| config.register_relation(ROM::Solr::SchemaInfo) }
 
     ROM::Solr::SchemaInfoRepo.new(rom)
   end

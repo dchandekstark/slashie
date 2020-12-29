@@ -1,7 +1,8 @@
 module ROM
   module Solr
     module Commands
-      class Create < ROM::HTTP::Commands::Create
+      class Create < ROM::Commands::Create
+
         adapter :solr
 
       end

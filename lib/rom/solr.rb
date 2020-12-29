@@ -1,32 +1,5 @@
 require 'rom-http'
 
-# Utilities
-require_relative 'solr/array'
-require_relative 'solr/select_cursor'
-
-# Handlers
-require_relative 'solr/request_handler'
-require_relative 'solr/update_request_handler'
-require_relative 'solr/response_handler'
-
-# Datasets
-require_relative 'solr/dataset'
-require_relative 'solr/select_dataset'
-require_relative 'solr/update_dataset'
-
-# Gateway
-require_relative 'solr/gateway'
-
-# Relations
-require_relative 'solr/relation'
-require_relative 'solr/search_relation'
-require_relative 'solr/schema_info_relation'
-
-# Repositories
-require_relative 'solr/repository'
-require_relative 'solr/schema_info_repo'
-require_relative 'solr/search_repo'
-
 module ROM
   module Solr
 
@@ -42,5 +15,32 @@ module ROM
 
   end
 end
+
+# Utilities
+require_relative 'solr/array'
+require_relative 'solr/select_cursor'
+
+# Handlers
+require_relative 'solr/request_handler'
+require_relative 'solr/response_handler'
+
+# Datasets
+require_relative 'solr/dataset'
+
+# Gateway
+require_relative 'solr/gateway'
+
+# Relations
+require_relative 'solr/relation'
+require_relative 'solr/documents_relation'
+require_relative 'solr/schema_info_relation'
+
+# Repositories
+require_relative 'solr/repository'
+require_relative 'solr/schema_info_repo'
+require_relative 'solr/document_repo'
+
+# Commands
+require_relative 'solr/commands'
 
 ROM.register_adapter(:solr, ROM::Solr)

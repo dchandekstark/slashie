@@ -1,6 +1,6 @@
 module ROM
   module Solr
-    class SearchRepo < Repository[:search]
+    class DocumentRepo < Repository[:documents]
 
       auto_struct false
 

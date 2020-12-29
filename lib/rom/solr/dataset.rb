@@ -3,24 +3,26 @@ module ROM
     class Dataset < ROM::HTTP::Dataset
 
       setting :default_response_key, reader: true
-
-      setting :default_headers, reader: true
+      setting :default_content_type, reader: true
 
       configure do |config|
         config.default_response_handler = ResponseHandler
         config.default_request_handler  = RequestHandler
-        config.default_headers = { Accept: 'application/json' }
       end
 
       option :response_key, default: proc { self.class.default_response_key }
-
-      option :headers, type: Types::Hash, default: proc { self.class.default_headers }
+      option :request_data, type: Types::String, default: proc { EMPTY_STRING }
+      option :content_type, type: Types::String, default: proc { self.class.default_content_type }
 
       # @override
       def each(&block)
         return to_enum unless block_given?
 
         enumerable_data.each(&block)
+      end
+
+      def with_request_data(data)
+        with_options(request_data: data)
       end
 
       def with_response_key(*path)
@@ -34,6 +36,14 @@ module ROM
       # @override Cache response by default
       def response
         cache.fetch_or_store(:response) { __response__ }
+      end
+
+      def has_request_data?
+        !request_data.nil? && !request_data.empty?
+      end
+
+      def has_params?
+        !params.empty?
       end
 
       private

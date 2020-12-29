@@ -13,7 +13,7 @@ module ROM
           params[:sort] = Array.wrap(sort).append('id ASC').join(',')
         end
 
-        super relation.add_params(params)
+        super relation.add_params(params).with_response_key(:response, :docs)
       end
 
       def each(&block)
@@ -29,7 +29,15 @@ module ROM
       end
 
       def last_page?
-        dataset.cursor_mark == dataset.next_cursor_mark
+        cursor_mark == next_cursor_mark
+      end
+
+      def cursor_mark
+        dataset.params[:cursorMark]
+      end
+
+      def next_cursor_mark
+        dataset.response[:nextCursorMark]
       end
 
       def move_cursor
@@ -37,7 +45,7 @@ module ROM
       end
 
       def next_page
-        __getobj__.add_params(cursorMark: dataset.next_cursor_mark)
+        __getobj__.add_params(cursorMark: next_cursor_mark)
       end
 
     end

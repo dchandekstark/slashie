@@ -1,10 +1,22 @@
 module ROM
   module Solr
-    class SearchRelation < Relation
+    class DocumentsRelation < Relation
 
       auto_struct false
 
-      schema(:select, as: :search) { }
+      schema(:select, as: :documents) { }
+
+      def delete_by_id
+        delete(map(&:id))
+      end
+
+      def delete_by_query
+        delete(query: params.fetch(:q))
+      end
+
+      def update(data)
+        update_json_docs(data)
+      end
 
       # @override
       def each(&block)
@@ -92,7 +104,31 @@ module ROM
 
       # @override Don't have to enumerate to get count (may not be exact)
       def count
-        dataset.num_found
+        dataset.response.dig(:response, :numFound)
+      end
+
+      private
+
+      def update_json_docs(data)
+        with_options(
+          base_path: 'update/json/docs',
+          request_method: :post,
+          content_type: 'application/json',
+          request_data: JSON.dump(data)
+        )
+      end
+
+      def json_command(data)
+        with_options(
+          base_path: 'update',
+          request_method: :post,
+          content_type: 'application/json',
+          request_data: JSON.dump(data)
+        )
+      end
+
+      def delete(data)
+        json_command(delete: data)
       end
 
     end
