@@ -1,7 +1,7 @@
 module ROM
   module Solr
     module Commands
-      class Delete < ROM::Commands::Delete
+      class Command < ROM::Command
         adapter :solr
       end
     end

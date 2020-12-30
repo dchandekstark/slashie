@@ -3,25 +3,47 @@ module ROM
     class RequestHandler
 
       def self.call(dataset)
-        uri = URI(dataset.uri)
+        new(dataset).execute
+      end
 
-        unless dataset.params.empty?
-          uri.query = URI.encode_www_form(dataset.params)
-        end
+      attr_reader :dataset
 
-        headers = dataset.headers.transform_keys(&:to_s)
+      def initialize(dataset)
+        @dataset = dataset
+      end
 
-        request_class = Net::HTTP.const_get(ROM::Inflector.classify(dataset.request_method))
-
-        request = request_class.new(uri.request_uri, headers)
-
-        if dataset.has_request_data?
-          request.body = dataset.request_data
-          request.content_type = dataset.content_type
-        end
-
+      def execute
         Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme.eql?('https')) do |http|
           http.request(request)
+        end
+      end
+
+      def request
+        request_class.new(uri.request_uri, headers).tap do |req|
+          if dataset.has_request_data?
+            req.body = dataset.request_data
+            req.content_type = dataset.content_type
+          end
+        end
+      end
+
+      def headers
+        dataset.headers.transform_keys(&:to_s)
+      end
+
+      def uri
+        @uri ||= URI(dataset.uri).tap do |u|
+          unless dataset.has_params?
+            u.query = URI.encode_www_form(dataset.params)
+          end
+        end
+      end
+
+      def request_class
+        if dataset.has_request_data?
+          Net::HTTP::Post
+        else
+          Net::HTTP::Get
         end
       end
 

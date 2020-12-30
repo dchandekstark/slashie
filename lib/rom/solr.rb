@@ -1,4 +1,5 @@
 require 'rom-http'
+require 'securerandom'
 
 module ROM
   module Solr
@@ -12,6 +13,8 @@ module ROM
     module Types
       include ROM::HTTP::Types
     end
+
+    UUID = Types::String.default { SecureRandom.uuid }
 
   end
 end
@@ -29,6 +32,9 @@ require_relative 'solr/dataset'
 
 # Gateway
 require_relative 'solr/gateway'
+
+# Schemas
+require_relative 'solr/schema'
 
 # Relations
 require_relative 'solr/relation'

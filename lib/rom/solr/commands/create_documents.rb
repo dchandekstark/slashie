@@ -2,15 +2,11 @@ module ROM
   module Solr
     module Commands
       class CreateDocuments < Create
-
         relation :documents
 
-        register_as :create_documents
-
-        def execute(tuples)
-          relation.update_json_docs(tuples)
+        def execute(docs, commit: true)
+          relation.update_json_docs(docs)
         end
-
       end
     end
   end
