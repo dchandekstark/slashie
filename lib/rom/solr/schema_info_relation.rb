@@ -2,9 +2,9 @@ module ROM
   module Solr
     class SchemaInfoRelation < Relation
 
-      auto_struct false
-
-      schema(:schema, as: :schema_info) { }
+      schema(:schema_info) do
+        # no-op
+      end
 
       def show_defaults(show = true)
         add_params(showDefaults: Types::Bool[show])

@@ -2,7 +2,9 @@ module ROM
   module Solr
     class Relation < ROM::HTTP::Relation
 
-      adapter :solr
+      adapter     :solr
+      auto_struct false
+      auto_map    false
 
       forward :with_response_key
 

@@ -4,6 +4,7 @@ module ROM
 
       setting :default_response_key, reader: true
       setting :default_content_type, reader: true
+      setting :default_base_path,    reader: true
 
       configure do |config|
         config.default_response_handler = ResponseHandler
@@ -13,6 +14,7 @@ module ROM
       option :response_key, default: proc { self.class.default_response_key }
       option :request_data, type: Types::String, default: proc { EMPTY_STRING }
       option :content_type, type: Types::String, default: proc { self.class.default_content_type }
+      option :base_path,    type: Types::Path,   default: proc { self.class.default_base_path || EMPTY_STRING }
 
       # @override
       def each(&block)

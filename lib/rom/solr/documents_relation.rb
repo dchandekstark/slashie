@@ -2,10 +2,7 @@ module ROM
   module Solr
     class DocumentsRelation < Relation
 
-      auto_struct false
-      auto_map    false
-
-      schema(:select, as: :documents) do
+      schema(:documents) do
         attribute :id, UUID
       end
 
@@ -13,11 +10,16 @@ module ROM
       def each(&block)
         return to_enum unless block_given?
 
-        docs.each(&block)
+        SelectCursor.new(dataset).each(&block)
+      end
+
+      # @override
+      def primary_key
+        'id'.freeze
       end
 
       def by_unique_key(id)
-        q('id:%s' % id)
+        q('%s:%s' % [ primary_key, id ])
       end
 
       def all
@@ -26,32 +28,11 @@ module ROM
 
       # @override Don't have to enumerate to get count (may not be exact)
       def count
-        dataset.response.dig(:response, :numFound)
+        dataset.num_found
       end
 
-      def docs
-        dataset.response.dig(:response, :docs)
-      end
-
-      def cursor
-        SelectCursor.new(self)
-      end
-
-      # @api private
-      def json_update_command(data)
-        with_options(
-          base_path: 'update',
-          content_type: 'application/json',
-          request_data: JSON.dump(data)
-        )
-      end
-
-      def update_json_docs(docs)
-        with_options(
-          base_path: 'update/json/docs',
-          content_type: 'application/json',
-          request_data: JSON.dump(docs)
-        )
+      def delete_by_query(query)
+        dataset.delete_by_query(query)
       end
 
       #
@@ -130,6 +111,14 @@ module ROM
 
       def commit_within(millis)
         add_params(commitWithin: Types::Coercible::Integer[millis])
+      end
+
+      def overwrite(value = true)
+        add_params(overwrite: Types::Bool[value])
+      end
+
+      def expunge_deletes(value = true)
+        add_params(expungeDeletes: Types::Bool[value])
       end
 
     end

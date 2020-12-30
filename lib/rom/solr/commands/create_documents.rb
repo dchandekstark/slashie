@@ -2,11 +2,13 @@ module ROM
   module Solr
     module Commands
       class CreateDocuments < Create
-        relation :documents
 
-        def execute(docs, commit: true)
-          relation.update_json_docs(docs)
+        relation :json_update
+
+        def execute(docs, commit: true, commit_within: nil)
+
         end
+
       end
     end
   end

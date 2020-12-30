@@ -2,6 +2,7 @@ require_relative 'commands/command'
 require_relative 'commands/commit'
 
 require_relative 'commands/create'
+require_relative 'commands/create_document'
 require_relative 'commands/create_documents'
 
 require_relative 'commands/update'

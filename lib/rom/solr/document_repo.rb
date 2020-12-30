@@ -5,7 +5,11 @@ module ROM
       auto_struct false
 
       def find(id)
-        root.by_unique_key(id).one!
+        documents.by_unique_key(id).one!
+      end
+
+      def all
+        documents.all
       end
 
     end

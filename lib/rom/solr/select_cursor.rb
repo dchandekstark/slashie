@@ -3,20 +3,20 @@ require 'delegate'
 module ROM
   module Solr
     #
-    # Wraps a DocumentsRelation to provide pagination with a cursor.
+    # Wraps a DocumentsDataset to provide pagination with a cursor.
     #
     class SelectCursor < SimpleDelegator
 
-      def initialize(relation)
+      def initialize(dataset)
         params = { cursorMark: '*' }
 
         # Sort must include a sort on unique key (id).
-        sort = relation.dataset.params[:sort]
+        sort = dataset.params[:sort]
         unless /\bid\b/ =~ sort
           params[:sort] = Array.wrap(sort).append('id ASC').join(',')
         end
 
-        super relation.add_params(params)
+        super dataset.add_params(params)
       end
 
       def each(&block)
@@ -33,14 +33,6 @@ module ROM
 
       def last_page?
         cursor_mark == next_cursor_mark
-      end
-
-      def cursor_mark
-        dataset.params[:cursorMark]
-      end
-
-      def next_cursor_mark
-        dataset.response[:nextCursorMark]
       end
 
       def move_cursor

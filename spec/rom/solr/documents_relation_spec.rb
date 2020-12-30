@@ -120,5 +120,39 @@ module ROM::Solr
 
     describe "#count"
 
+    describe "#commit" do
+      it "adds :commit param" do
+        expect(documents.commit.dataset.params).to include(commit: true)
+      end
+    end
+
+    describe "#commit_within" do
+      it "adds :commitWithin param" do
+        expect(documents.commit_within(1000).dataset.params).to include(commitWithin: 1000)
+      end
+    end
+
+    describe "#overwrite" do
+      it "adds :overwrite param" do
+        expect(documents.overwrite.dataset.params).to include(overwrite: true)
+        expect(documents.overwrite(false).dataset.params).to include(overwrite: false)
+      end
+    end
+
+    describe "#expunge_deletes" do
+      it "adds :expungeDeletes param" do
+        expect(documents.expunge_deletes.dataset.params).to include(expungeDeletes: true)
+        expect(documents.expunge_deletes(false).dataset.params).to include(expungeDeletes: false)
+      end
+    end
+
+    describe "#delete_by_query"
+
+    describe "#delete"
+
+    describe "#insert"
+
+    describe "#update"
+
   end
 end

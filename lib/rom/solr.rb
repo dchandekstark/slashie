@@ -21,7 +21,6 @@ end
 
 # Utilities
 require_relative 'solr/array'
-require_relative 'solr/select_cursor'
 
 # Handlers
 require_relative 'solr/request_handler'
@@ -29,6 +28,8 @@ require_relative 'solr/response_handler'
 
 # Datasets
 require_relative 'solr/dataset'
+require_relative 'solr/documents_dataset'
+require_relative 'solr/schema_info_dataset'
 
 # Gateway
 require_relative 'solr/gateway'
