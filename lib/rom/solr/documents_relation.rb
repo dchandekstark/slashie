@@ -4,6 +4,8 @@ module ROM
 
       schema(:documents) do
         attribute :id, UUID
+
+        primary_key :id
       end
 
       # @override
@@ -13,10 +15,10 @@ module ROM
         SelectCursor.new(dataset).each(&block)
       end
 
-      # @override
-      def primary_key
-        'id'.freeze
-      end
+      # # @override
+      # def primary_key
+      #   :id
+      # end
 
       def by_unique_key(id)
         q('%s:%s' % [ primary_key, id ])

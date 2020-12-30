@@ -3,10 +3,10 @@ module ROM
     module Commands
       class CreateDocuments < Create
 
-        relation :json_update
+        relation :documents
 
-        def execute(docs, commit: true, commit_within: nil)
-
+        def execute(*docs)
+          relation.insert(*docs).response
         end
 
       end
