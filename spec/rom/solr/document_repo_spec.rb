@@ -13,5 +13,19 @@ module ROM::Solr
 
     describe "#find"
 
+    describe "#search"
+
+    describe "#all"
+
+    describe "#create"
+
+    describe "#update"
+
+    describe "#delete"
+
+    describe "#delete_by_query"
+
+    describe "#delete_all"
+
   end
 end

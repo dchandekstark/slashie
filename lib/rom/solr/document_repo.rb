@@ -9,7 +9,7 @@ module ROM
       end
 
       def search
-        documents.search
+        documents
       end
 
       def all
@@ -21,11 +21,11 @@ module ROM
       end
 
       def delete(docs)
-
+        documents.command(:delete_documents).call(docs)
       end
 
       def update(docs)
-
+        documents.command(:update_documents).call(docs)
       end
 
     end

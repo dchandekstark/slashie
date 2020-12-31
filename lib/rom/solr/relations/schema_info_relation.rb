@@ -19,47 +19,80 @@ module ROM
       end
 
       def copy_fields
-        with_options(path: :copyfields, response_key: :copyFields)
+        with_options(
+          path: :copyfields,
+          response_key: :copyFields
+        )
       end
 
       def dynamic_fields
-        with_options(path: :dynamicfields, response_key: :dynamicFields)
+        with_options(
+          path: :dynamicfields,
+          response_key: :dynamicFields
+        )
       end
 
       def dynamic_field(name)
-        with_options(path: "dynamicfields/#{name}", response_key: :dynamicField)
+        with_options(
+          path: "dynamicfields/#{name}",
+          response_key: :dynamicField
+        )
       end
 
       def similarity
-        with_options(path: :similarity, response_key: :similarity)
+        with_options(
+          path: :similarity,
+          response_key: :similarity
+        )
       end
 
       def unique_key
-        with_options(path: :uniquekey, response_key: :uniqueKey)
+        with_options(
+          path: :uniquekey,
+          response_key: :uniqueKey
+        )
       end
 
       def version
-        with_options(path: :version, response_key: :version)
+        with_options(
+          path: :version,
+          response_key: :version
+        )
       end
 
       def schema_name
-        with_options(path: :name, response_key: :name)
+        with_options(
+          path: :name,
+          response_key: :name
+        )
       end
 
       def fields
-        with_options(path: :fields, response_key: :fields)
+        with_options(
+          path: :fields,
+          response_key: :fields
+        )
       end
 
       def field(name)
-        with_options(path: "fields/#{name}", response_key: :field)
+        with_options(
+          path: "fields/#{name}",
+          response_key: :field
+        )
       end
 
       def field_types
-        with_options(path: :fieldtypes, response_key: :fieldTypes)
+        with_options(
+          path: :fieldtypes,
+          response_key: :fieldTypes
+        )
       end
 
       def field_type(name)
-        with_options(path: "fieldtypes/#{name}", response_key: :fieldType)
+        with_options(
+          path: "fieldtypes/#{name}",
+          response_key: :fieldType
+        )
       end
 
     end

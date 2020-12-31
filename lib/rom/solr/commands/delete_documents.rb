@@ -5,8 +5,8 @@ module ROM
 
         relation :documents
 
-        def execute
-          relation.delete
+        def execute(docs)
+          relation.delete(docs)
         end
 
       end

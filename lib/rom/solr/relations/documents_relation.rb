@@ -18,16 +18,12 @@ module ROM
         :id
       end
 
-      def search
-        with_base_path('select')
-      end
-
       def by_unique_key(id)
-        search.q('%s:%s' % [ primary_key, id ])
+        q('%s:%s' % [ primary_key, id ])
       end
 
       def all
-        search.q('*:*')
+        q('*:*')
       end
 
       # @override
@@ -44,10 +40,12 @@ module ROM
       end
 
       def insert(docs)
-        Array.wrap(docs).map do |doc|
+        data = Array.wrap(docs).map do |doc|
           doc.transform_keys!(&:to_sym)
           doc[:id] ||= UUID[]
         end
+
+        update(data)
       end
 
       def update(docs)
@@ -55,6 +53,16 @@ module ROM
           base_path: 'update/json/docs',
           content_type: 'application/json',
           request_data: JSON.dump(docs)
+        )
+      end
+
+      def delete(docs)
+        ids = Array.wrap(docs).map { |doc| doc.transform_keys(&:to_sym) }.map(&:id)
+
+        with_options(
+          base_path: 'update',
+          content_type: 'application/json',
+          request_data: JSON.dump(delete: ids)
         )
       end
 
