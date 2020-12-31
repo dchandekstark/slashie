@@ -148,11 +148,33 @@ module ROM::Solr
       end
     end
 
-    describe "#delete_by_query"
+    describe "#delete_by_query" do
+      it "adds the query to the request" do
+        expect(documents.delete_by_query('*:*').dataset.request_data).to eq '{"delete":{"query":"*:*"}}'
+      end
+    end
 
-    describe "#delete"
+    describe "#delete" do
+      let(:docs) do
+        [ {id: 1, title: "It was the best of times"}, {id: 2, title: "It was the worst of times"} ]
+      end
 
-    describe "#insert"
+      it "adds the ids to the request" do
+        expect(documents.delete(docs).dataset.request_data).to eq '{"delete":[1,2]}'
+      end
+    end
+
+    describe "#insert" do
+      let(:docs) do
+        [ {title: "It was the best of times"}, {title: "It was the worst of times"} ]
+      end
+
+      it "adds the docs to the request" do
+        data = documents.insert(docs).dataset.request_data
+        expect(data).to match(/It was the best of times/)
+        expect(data).to match(/It was the worst of times/)
+      end
+    end
 
     describe "#update"
 

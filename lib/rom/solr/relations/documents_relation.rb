@@ -40,29 +40,51 @@ module ROM
       end
 
       def insert(docs)
+        # FIXME: use input schema
         data = Array.wrap(docs).map do |doc|
           doc.transform_keys!(&:to_sym)
           doc[:id] ||= UUID[]
+          doc
         end
 
-        update(data)
-      end
-
-      def update(docs)
         with_options(
           base_path: 'update/json/docs',
           content_type: 'application/json',
-          request_data: JSON.dump(docs)
+          request_data: JSON.dump(data)
+        )
+      end
+
+      def update(docs)
+        # FIXME: use input schema
+        data = Array.wrap(docs)
+                 .map    { |doc| doc.transform_keys(&:to_sym) }
+                 .select { |doc| doc.key?(:id) }
+
+        with_options(
+          base_path: 'update/json/docs',
+          content_type: 'application/json',
+          request_data: JSON.dump(data)
         )
       end
 
       def delete(docs)
-        ids = Array.wrap(docs).map { |doc| doc.transform_keys(&:to_sym) }.map(&:id)
+        # FIXME: use input schema
+        ids = Array.wrap(docs)
+                .map { |doc| doc.transform_keys(&:to_sym) }
+                .map { |doc| doc.fetch(:id) }
 
         with_options(
           base_path: 'update',
           content_type: 'application/json',
           request_data: JSON.dump(delete: ids)
+        )
+      end
+
+      def delete_by_query(query)
+        with_options(
+          base_path: 'update',
+          content_type: 'application/json',
+          request_data: JSON.dump(delete: {query: query})
         )
       end
 
