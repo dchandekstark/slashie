@@ -1,12 +1,10 @@
+require 'rom/solr/select_cursor'
+
 module ROM
   module Solr
     class DocumentsRelation < Relation
 
-      schema(:documents) do
-        attribute :id, UUID
-
-        primary_key :id
-      end
+      schema(:documents) { }
 
       # @override
       def each(&block)
@@ -15,26 +13,49 @@ module ROM
         SelectCursor.new(dataset).each(&block)
       end
 
-      # # @override
-      # def primary_key
-      #   :id
-      # end
+      # @override FIXME: Get from Solr schema unique key
+      def primary_key
+        :id
+      end
+
+      def search
+        with_base_path('select')
+      end
 
       def by_unique_key(id)
-        q('%s:%s' % [ primary_key, id ])
+        search.q('%s:%s' % [ primary_key, id ])
       end
 
       def all
-        q('*:*')
+        search.q('*:*')
       end
 
-      # @override Don't have to enumerate to get count (may not be exact)
+      # @override
       def count
-        dataset.num_found
+        num_found_exact ? num_found : super
       end
 
-      def delete_by_query(query)
-        dataset.delete_by_query(query)
+      def num_found
+        response.dig(:response, :numFound)
+      end
+
+      def num_found_exact
+        response.dig(:response, :numFoundExact)
+      end
+
+      def insert(docs)
+        Array.wrap(docs).map do |doc|
+          doc.transform_keys!(&:to_sym)
+          doc[:id] ||= UUID[]
+        end
+      end
+
+      def update(docs)
+        with_options(
+          base_path: 'update/json/docs',
+          content_type: 'application/json',
+          request_data: JSON.dump(docs)
+        )
       end
 
       #
@@ -95,6 +116,7 @@ module ROM
       def debug(setting)
         type = Types::Coercible::String
                  .enum('query', 'timing', 'results', 'all', 'true')
+
         add_params(debug: type[setting])
       end
 
@@ -107,11 +129,13 @@ module ROM
         add_params(minExactCount: Types::Coercible::Integer[num])
       end
 
-      def commit
-        add_params(commit: true)
+      def commit(value = true)
+        add_params(commit: Types::Bool[value])
       end
 
       def commit_within(millis)
+        return self if millis.nil?
+
         add_params(commitWithin: Types::Coercible::Integer[millis])
       end
 

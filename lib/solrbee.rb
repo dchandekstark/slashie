@@ -4,26 +4,23 @@ require "rom/solr"
 
 module Solrbee
 
-  def self.uri
-    ENV.fetch('SOLR_URL', 'http://localhost:8983/solr')
-  end
+  DEFAULT_URI = ENV.fetch('SOLR_URL', 'http://localhost:8983/solr').freeze
 
   def self.documents
-    rom = container do |config|
-      config.register_relation(ROM::Solr::DocumentsRelation)
-    end
-
-    ROM::Solr::DocumentRepo.new(rom)
+    ROM::Solr::DocumentRepo.new(container)
   end
 
   def self.schema_info
-    rom = container { |config| config.register_relation(ROM::Solr::SchemaInfoRelation) }
-
-    ROM::Solr::SchemaInfoRepo.new(rom)
+    ROM::Solr::SchemaInfoRepo.new(container)
   end
 
-  def self.container
+  def self.container(uri: DEFAULT_URI)
     ROM.container(:solr, uri: uri) do |config|
+      config.auto_registration(
+        File.expand_path('../rom/solr/', __FILE__),
+        namespace: 'ROM::Solr'
+      )
+
       yield config if block_given?
     end
   end

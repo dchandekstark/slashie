@@ -1,3 +1,5 @@
+require 'rom/solr/relations/documents_relation'
+
 module ROM::Solr
   RSpec.describe DocumentsRelation do
 

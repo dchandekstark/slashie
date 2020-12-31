@@ -5,8 +5,8 @@ module ROM
 
         relation :documents
 
-        def execute(*docs)
-          relation.update(*docs).response
+        def execute(docs)
+          relation.update(docs)
         end
 
       end

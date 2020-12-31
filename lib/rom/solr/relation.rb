@@ -17,12 +17,21 @@ module ROM
 
       def log_params_list(log_params)
         lplist = log_params.nil? ? nil : Array.wrap(log_params).join(',')
+
         add_params(logParamsList: lplist)
       end
       alias_method :log_params, :log_params_list
 
       def count
         to_enum.count
+      end
+
+      def response
+        dataset.response
+      end
+
+      def params
+        dataset.params.dup
       end
 
     end

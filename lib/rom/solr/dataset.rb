@@ -16,6 +16,15 @@ module ROM
       option :content_type, type: Types::String, default: proc { self.class.default_content_type }
       option :base_path,    type: Types::Path,   default: proc { self.class.default_base_path || EMPTY_STRING }
 
+      # @override Query parameters are valid with POST, too.
+      def uri
+        uri_s = [options[:uri], path].compact.reject(&:empty?).join('/')
+
+        URI(uri_s).tap do |u|
+          u.query = param_encoder.call(params) if has_params?
+        end
+      end
+
       # @override
       def each(&block)
         return to_enum unless block_given?
@@ -45,7 +54,7 @@ module ROM
       end
 
       def has_params?
-        !params.empty?
+        params.any?
       end
 
       private

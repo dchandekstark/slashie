@@ -1,20 +1,17 @@
-require_relative 'commands/command'
-require_relative 'commands/commit'
-
-require_relative 'commands/create'
-require_relative 'commands/create_document'
-require_relative 'commands/create_documents'
-
-require_relative 'commands/update'
-require_relative 'commands/update_documents'
-
-require_relative 'commands/delete'
-require_relative 'commands/delete_documents'
-
 module ROM
   module Solr
     module Commands
+      class Create < ROM::Commands::Create
+        adapter :solr
+      end
 
+      class Update < ROM::Commands::Update
+        adapter :solr
+      end
+
+      class Delete < ROM::Commands::Delete
+        adapter :solr
+      end
     end
   end
 end

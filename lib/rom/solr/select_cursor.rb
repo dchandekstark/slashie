@@ -31,6 +31,14 @@ module ROM
         end
       end
 
+      def cursor_mark
+        params[:cursorMark]
+      end
+
+      def next_cursor_mark
+        response[:nextCursorMark]
+      end
+
       def last_page?
         cursor_mark == next_cursor_mark
       end

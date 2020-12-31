@@ -33,8 +33,8 @@ module ROM
 
       def uri
         @uri ||= URI(dataset.uri).tap do |u|
-          unless dataset.has_params?
-            u.query = URI.encode_www_form(dataset.params)
+          if dataset.has_params?
+            u.query ||= URI.encode_www_form(dataset.params)
           end
         end
       end

@@ -39,8 +39,6 @@ require_relative 'solr/schema'
 
 # Relations
 require_relative 'solr/relation'
-require_relative 'solr/documents_relation'
-require_relative 'solr/schema_info_relation'
 
 # Repositories
 require_relative 'solr/repository'
