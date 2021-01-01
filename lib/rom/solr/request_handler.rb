@@ -20,7 +20,7 @@ module ROM
 
       def request
         request_class.new(uri.request_uri, headers).tap do |req|
-          if dataset.has_request_data?
+          if dataset.request_data?
             req.body = dataset.request_data
             req.content_type = dataset.content_type
           end
@@ -33,14 +33,14 @@ module ROM
 
       def uri
         @uri ||= URI(dataset.uri).tap do |u|
-          if dataset.has_params?
+          if dataset.params?
             u.query ||= URI.encode_www_form(dataset.params)
           end
         end
       end
 
       def request_class
-        if dataset.has_request_data?
+        if dataset.request_data?
           Net::HTTP::Post
         else
           Net::HTTP::Get

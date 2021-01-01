@@ -8,10 +8,6 @@ module ROM
         documents.by_unique_key(id).one!
       end
 
-      def search
-        documents
-      end
-
       def all
         documents.all
       end
@@ -31,6 +27,8 @@ module ROM
       def update(docs, **opts)
         docs_command(:update_documents, docs, **opts)
       end
+
+      private
 
       def docs_command(command, data, commit: false, commit_within: nil)
         documents

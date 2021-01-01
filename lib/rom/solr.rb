@@ -20,32 +20,32 @@ module ROM
 end
 
 # Utilities
-require_relative 'solr/array'
+require 'rom/solr/array'
 
 # Handlers
-require_relative 'solr/request_handler'
-require_relative 'solr/response_handler'
+require 'rom/solr/request_handler'
+require 'rom/solr/response_handler'
 
 # Datasets
-require_relative 'solr/dataset'
-require_relative 'solr/documents_dataset'
-require_relative 'solr/schema_info_dataset'
+require 'rom/solr/dataset'
+require 'rom/solr/documents_dataset'
+require 'rom/solr/schema_info_dataset'
 
 # Gateway
-require_relative 'solr/gateway'
+require 'rom/solr/gateway'
 
 # Schemas
-require_relative 'solr/schema'
+require 'rom/solr/schema'
 
 # Relations
-require_relative 'solr/relation'
+require 'rom/solr/relation'
 
 # Repositories
-require_relative 'solr/repository'
-require_relative 'solr/schema_info_repo'
-require_relative 'solr/document_repo'
+require 'rom/solr/repository'
+require 'rom/solr/schema_info_repo'
+require 'rom/solr/document_repo'
 
 # Commands
-require_relative 'solr/commands'
+require 'rom/solr/commands'
 
 ROM.register_adapter(:solr, ROM::Solr)

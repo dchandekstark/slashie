@@ -14,7 +14,7 @@ module ROM
       end
 
       def docs
-        response.dig(:response, :docs)
+        search_response(:docs)
       end
 
       def cursor_mark
@@ -25,12 +25,41 @@ module ROM
         response[:nextCursorMark]
       end
 
+      def start
+        search_response(:start)
+      end
+      alias_method :offset, :start
+
       def num_found
-        response.dig(:response, :numFound)
+        search_response(:numFound)
       end
 
       def num_found_exact
-        response.dig(:response, :numFoundExact)
+        search_response(:numFoundExact)
+      end
+
+      def num_found_exact?
+        num_found_exact === true
+      end
+
+      def search_response(key)
+        response.dig(:response, key)
+      end
+
+      def partial_results
+        response_header(:partialResults)
+      end
+
+      def partial_results?
+        partial_results === true
+      end
+
+      def response_params
+        response_header(:params)
+      end
+
+      def response_params?
+        !response_params.nil? && !response_params.empty?
       end
 
     end

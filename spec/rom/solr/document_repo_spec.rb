@@ -39,8 +39,6 @@ module ROM::Solr
       end
     end
 
-    its(:search) { is_expected.to be_a DocumentsRelation }
-
     describe "#all" do
       it "sets the :q param to select all documents" do
         expect(subject.all.params[:q]).to eq '*:*'
@@ -53,13 +51,9 @@ module ROM::Solr
 
     describe "#delete"
 
-    describe "#delete_by_query" do
+    describe "#delete_by_query"
 
-    end
-
-    describe "#delete_all" do
-
-    end
+    describe "#delete_all"
 
   end
 end

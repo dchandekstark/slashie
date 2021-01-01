@@ -1,11 +1,12 @@
-require 'forwardable'
 require 'rom/solr/documents_paginator'
 
 module ROM
   module Solr
     class DocumentsRelation < Relation
 
-      def_delegators :dataset, :num_found, :num_found_exact
+      def_delegators :dataset, :num_found, :num_found_exact?
+
+      # option :query_builder, type: Types.Instance(QueryBuilder), default: proc { QueryBuilder.new }
 
       schema(:documents) { }
 
@@ -33,7 +34,7 @@ module ROM
 
       # @override
       def count
-        num_found_exact ? num_found : super
+        num_found_exact? ? num_found : super
       end
 
       # Set a cursor on the relation for pagination
@@ -106,7 +107,7 @@ module ROM
       end
 
       #
-      # Params
+      # Common Query Parameters
       #
 
       def q(query)
@@ -114,12 +115,16 @@ module ROM
       end
       alias_method :query, :q
 
-      def fq(*filter)
-        add_params(fq: filter)
+      def fq(*filters)
+        return self if filters.empty?
+
+        add_params(fq: filters)
       end
       alias_method :filter, :fq
 
       def fl(*fields)
+        return self if fields.empty?
+
         add_params(fl: fields.join(','))
       end
       alias_method :fields, :fl
@@ -145,7 +150,7 @@ module ROM
       end
 
       def sort(*criteria)
-        # This implementation is very tentative
+        # This implementation is very tentative ...
         new_sort = criteria.prepend(params[:sort]).compact.join(',')
 
         add_params(sort: new_sort)
@@ -177,6 +182,9 @@ module ROM
         add_params(minExactCount: Types::Coercible::Integer[num])
       end
 
+      #
+      # Commit parameters
+      #
       def commit(value = true)
         add_params(commit: Types::Bool[value])
       end

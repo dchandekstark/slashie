@@ -1,6 +1,7 @@
-require "solrbee/version"
+require 'solrbee/version'
 
-require "rom/solr"
+require 'dry-types'
+require 'rom/solr'
 
 module Solrbee
 
@@ -23,6 +24,10 @@ module Solrbee
 
       yield config if block_given?
     end
+  end
+
+  module Types
+    include Dry.Types()
   end
 
 end

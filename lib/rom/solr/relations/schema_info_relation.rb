@@ -18,16 +18,22 @@ module ROM
         self
       end
 
-      def copy_fields
-        with_path :copyfields
+      def copy_fields(source_fields: nil, dest_fields: nil)
+        source_fl = Array.wrap(source_fields).join(',') unless source_fields.nil?
+        dest_fl   = Array.wrap(dest_fields).join(',') unless dest_fields.nil?
+
+        with_path(:copyfields)
+          .add_params('source.fl'=>source_fl, 'dest.fl'=>dest_fl)
       end
 
-      def dynamic_fields
-        with_path :dynamicfields
+      def dynamic_fields(defaults: true)
+        with_path(:dynamicfields)
+          .show_defaults(defaults)
       end
 
-      def dynamic_field(name)
-        with_path "dynamicfields/#{name}"
+      def dynamic_field(name, defaults: true)
+        with_path("dynamicfields/#{name}")
+          .show_defaults(defaults)
       end
 
       def similarity
@@ -46,20 +52,25 @@ module ROM
         with_path :name
       end
 
-      def fields
-        with_path :fields
+      def fields(dynamic: true, defaults: true)
+        with_path(:fields)
+          .include_dynamic(dynamic)
+          .show_defaults(defaults)
       end
 
-      def field(name)
-        with_path "fields/#{name}"
+      def field(name, defaults: true)
+        with_path("fields/#{name}")
+          .show_defaults(defaults)
       end
 
-      def field_types
-        with_path :fieldtypes
+      def field_types(defaults: true)
+        with_path(:fieldtypes)
+          .show_defaults(defaults)
       end
 
-      def field_type(name)
-        with_path "fieldtypes/#{name}"
+      def field_type(name, defaults: true)
+        with_path("fieldtypes/#{name}")
+          .show_defaults(defaults)
       end
 
     end

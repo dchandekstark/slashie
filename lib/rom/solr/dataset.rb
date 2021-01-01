@@ -25,7 +25,7 @@ module ROM
         uri_s = [options[:uri], path].compact.reject(&:empty?).join('/')
 
         URI(uri_s).tap do |u|
-          u.query = param_encoder.call(params) if has_params?
+          u.query = param_encoder.call(params) if params?
         end
       end
 
@@ -42,18 +42,31 @@ module ROM
         cache.fetch_or_store(:response) { __response__ }
       end
 
-      # Note: 'responseHeader' key is not present in response
-      # when the request included the param 'omitHeader=true'.
-      def response_header
-        response[:responseHeader]
+      def response_header(key)
+        response.dig(:responseHeader, key)
       end
 
-      def has_request_data?
+      def request_data?
         !request_data.nil? && !request_data.empty?
       end
 
-      def has_params?
+      def params?
         params.any?
+      end
+
+      def status
+        response_header(:status)
+      end
+
+      def qtime
+        response_header(:QTime)
+      end
+
+      def append_param_values(param, values)
+        param_values = Array.wrap(params[param])
+        new_values = Array.wrap(values)
+
+        add_params param => (param_values + new_values)
       end
 
       private

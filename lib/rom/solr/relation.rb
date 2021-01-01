@@ -1,3 +1,5 @@
+require 'forwardable'
+
 module ROM
   module Solr
     class Relation < ROM::HTTP::Relation
@@ -9,6 +11,7 @@ module ROM
       auto_struct false
       auto_map    false
 
+      # Need this?
       option :output_schema, default: ->{ NOOP_OUTPUT_SCHEMA }
 
       def wt(format)

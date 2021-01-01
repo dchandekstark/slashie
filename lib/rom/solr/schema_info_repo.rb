@@ -1,43 +1,27 @@
+require 'forwardable'
+
 module ROM
   module Solr
     class SchemaInfoRepo < Repository[:schema_info]
+      extend Forwardable
 
       auto_struct false
 
-      %i[ schema_name similarity unique_key version ].each do |name|
-        define_method name, ->{ schema_info.send(name).one! }
-      end
+      VALUES = %i[ schema_name
+                   similarity
+                   unique_key
+                   version
+                   info
+                   field
+                   field_type
+                   dynamic_field
+                   copy_field
+                   ]
 
-      def info
-        schema_info.info.one!
-      end
+      def_delegators :schema_info, :fields, :field_types, :dynamic_fields, :copy_fields
 
-      def fields(dynamic: true, defaults: true)
-        schema_info.fields.show_defaults(defaults).include_dynamic(dynamic)
-      end
-
-      def field(name, defaults: true)
-        schema_info.field(name).show_defaults(defaults).one
-      end
-
-      def field_types(defaults: true)
-        schema_info.field_types.show_defaults(defaults)
-      end
-
-      def field_type(name, defaults: true)
-        schema_info.field_type(name).show_defaults(defaults).one
-      end
-
-      def dynamic_fields
-        schema_info.dynamic_fields
-      end
-
-      def dynamic_field(name, defaults: true)
-        schema_info.dynamic_field(name).show_defaults(defaults).one
-      end
-
-      def copy_fields
-        schema_info.copy_fields
+      VALUES.each do |name|
+        define_method name, proc { |*args| schema_info.send(name, *args).one! }
       end
 
     end

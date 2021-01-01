@@ -24,6 +24,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "rom"
   spec.add_dependency "rom-http"
+  spec.add_dependency "dry-types"
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake"
