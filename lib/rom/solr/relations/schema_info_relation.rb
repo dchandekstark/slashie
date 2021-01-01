@@ -15,84 +15,51 @@ module ROM
       end
 
       def info
-        with_response_key(:schema)
+        self
       end
 
       def copy_fields
-        with_options(
-          path: :copyfields,
-          response_key: :copyFields
-        )
+        with_path :copyfields
       end
 
       def dynamic_fields
-        with_options(
-          path: :dynamicfields,
-          response_key: :dynamicFields
-        )
+        with_path :dynamicfields
       end
 
       def dynamic_field(name)
-        with_options(
-          path: "dynamicfields/#{name}",
-          response_key: :dynamicField
-        )
+        with_path "dynamicfields/#{name}"
       end
 
       def similarity
-        with_options(
-          path: :similarity,
-          response_key: :similarity
-        )
+        with_path :similarity
       end
 
       def unique_key
-        with_options(
-          path: :uniquekey,
-          response_key: :uniqueKey
-        )
+        with_path :uniquekey
       end
 
       def version
-        with_options(
-          path: :version,
-          response_key: :version
-        )
+        with_path :version
       end
 
       def schema_name
-        with_options(
-          path: :name,
-          response_key: :name
-        )
+        with_path :name
       end
 
       def fields
-        with_options(
-          path: :fields,
-          response_key: :fields
-        )
+        with_path :fields
       end
 
       def field(name)
-        with_options(
-          path: "fields/#{name}",
-          response_key: :field
-        )
+        with_path "fields/#{name}"
       end
 
       def field_types
-        with_options(
-          path: :fieldtypes,
-          response_key: :fieldTypes
-        )
+        with_path :fieldtypes
       end
 
       def field_type(name)
-        with_options(
-          path: "fieldtypes/#{name}",
-          response_key: :fieldType
-        )
+        with_path "fieldtypes/#{name}"
       end
 
     end

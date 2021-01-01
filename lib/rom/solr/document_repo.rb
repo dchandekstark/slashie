@@ -16,16 +16,28 @@ module ROM
         documents.all
       end
 
-      def create(docs)
-        documents.command(:create_documents).call(docs)
+      def create(docs, **opts)
+        docs_command(:create_documents, docs, **opts)
       end
 
-      def delete(docs)
-        documents.command(:delete_documents).call(docs)
+      def delete(docs, **opts)
+        docs_command(:delete_documents, docs, **opts)
       end
 
-      def update(docs)
-        documents.command(:update_documents).call(docs)
+      def delete_by_query(query, **opts)
+        docs_command(:delete_documents_by_query, query, **opts)
+      end
+
+      def update(docs, **opts)
+        docs_command(:update_documents, docs, **opts)
+      end
+
+      def docs_command(command, data, commit: false, commit_within: nil)
+        documents
+          .commit(commit)
+          .commit_within(commit_within)
+          .command(command)
+          .call(data)
       end
 
     end

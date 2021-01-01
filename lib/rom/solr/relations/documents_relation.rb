@@ -1,16 +1,21 @@
-require 'rom/solr/select_cursor'
+require 'forwardable'
+require 'rom/solr/documents_paginator'
 
 module ROM
   module Solr
     class DocumentsRelation < Relation
 
+      def_delegators :dataset, :num_found, :num_found_exact
+
       schema(:documents) { }
 
       # @override
       def each(&block)
+        return super unless cursor?
+
         return to_enum unless block_given?
 
-        SelectCursor.new(dataset).each(&block)
+        DocumentsPaginator.new(dataset).each(&block)
       end
 
       # @override FIXME: Get from Solr schema unique key
@@ -31,13 +36,25 @@ module ROM
         num_found_exact ? num_found : super
       end
 
-      def num_found
-        response.dig(:response, :numFound)
+      # Set a cursor on the relation for pagination
+      def cursor
+        relation = add_params(cursorMark: '*')
+
+        # Sort must include a sort on unique key (id).
+        if /\bid\b/ =~ params[:sort]
+          relation
+        else
+          relation.sort(params[:sort], 'id ASC')
+        end
       end
 
-      def num_found_exact
-        response.dig(:response, :numFoundExact)
+      def cursor?
+        params.key?(:cursorMark)
       end
+
+      #
+      # Commands
+      #
 
       def insert(docs)
         # FIXME: use input schema
@@ -91,6 +108,7 @@ module ROM
       #
       # Params
       #
+
       def q(query)
         add_params(q: Types::String[query])
       end
@@ -122,16 +140,15 @@ module ROM
         add_params(explainOther: Types::String[query])
       end
 
-      def omit_header(omit = true)
-        add_params(omitHeader: Types::Bool[omit])
-      end
-
       def start(offset)
         add_params(start: Types::Coercible::Integer[offset])
       end
 
       def sort(*criteria)
-        add_params(sort: criteria.join(','))
+        # This implementation is very tentative
+        new_sort = criteria.prepend(params[:sort]).compact.join(',')
+
+        add_params(sort: new_sort)
       end
 
       def rows(num)
@@ -152,6 +169,7 @@ module ROM
 
       def echo_params(setting)
         type = Types::Coercible::String.enum('explicit', 'all', 'none')
+
         add_params(echoParams: type[setting])
       end
 

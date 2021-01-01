@@ -1,12 +1,13 @@
 module ROM
   module Solr
     class Relation < ROM::HTTP::Relation
+      extend Forwardable
+
+      def_delegators :dataset, :response, :params
 
       adapter     :solr
       auto_struct false
       auto_map    false
-
-      forward :with_response_key
 
       option :output_schema, default: ->{ NOOP_OUTPUT_SCHEMA }
 
@@ -22,16 +23,12 @@ module ROM
       end
       alias_method :log_params, :log_params_list
 
+      def omit_header(omit = true)
+        add_params(omitHeader: Types::Bool[omit])
+      end
+
       def count
         to_enum.count
-      end
-
-      def response
-        dataset.response
-      end
-
-      def params
-        dataset.params.dup
       end
 
     end

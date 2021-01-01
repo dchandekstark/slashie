@@ -6,7 +6,7 @@ module ROM
         relation :documents
 
         def execute(docs)
-          relation.insert(docs)
+          relation.insert(docs).response
         end
 
       end
