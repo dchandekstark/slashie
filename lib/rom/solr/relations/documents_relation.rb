@@ -6,8 +6,6 @@ module ROM
 
       def_delegators :dataset, :num_found, :num_found_exact?
 
-      # option :query_builder, type: Types.Instance(QueryBuilder), default: proc { QueryBuilder.new }
-
       schema(:documents) { }
 
       # @override

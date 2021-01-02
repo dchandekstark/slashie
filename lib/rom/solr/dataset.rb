@@ -2,23 +2,22 @@ module ROM
   module Solr
     class Dataset < ROM::HTTP::Dataset
 
-      setting :default_content_type, reader: true
       setting :default_base_path, reader: true
-      setting :default_params, reader: true
+      # setting :default_params, reader: true
 
       configure do |config|
         config.default_response_handler = ResponseHandler
         config.default_request_handler  = RequestHandler
       end
 
-      option :request_data, type: Types::String, default: proc { EMPTY_STRING }
-      option :content_type, type: Types::String, default: proc { self.class.default_content_type }
+      option :request_data, type: Types::String, optional: true
+      option :content_type, type: Types::String, optional: true
 
       # @override
       option :base_path, type: Types::Path, default: proc { self.class.default_base_path || EMPTY_STRING }
 
       # @override
-      option :params, type: Types::Hash, default: proc { self.class.default_params || EMPTY_HASH }
+      # option :params, type: Types::Hash, default: proc { self.class.default_params || EMPTY_HASH }
 
       # @override Query parameters are valid with POST, too.
       def uri
@@ -47,7 +46,7 @@ module ROM
       end
 
       def request_data?
-        !request_data.nil? && !request_data.empty?
+        !request_data.nil?
       end
 
       def params?
@@ -60,13 +59,6 @@ module ROM
 
       def qtime
         response_header(:QTime)
-      end
-
-      def append_param_values(param, values)
-        param_values = Array.wrap(params[param])
-        new_values = Array.wrap(values)
-
-        add_params param => (param_values + new_values)
       end
 
       private

@@ -25,11 +25,6 @@ module ROM
         response[:nextCursorMark]
       end
 
-      def start
-        search_response(:start)
-      end
-      alias_method :offset, :start
-
       def num_found
         search_response(:numFound)
       end
