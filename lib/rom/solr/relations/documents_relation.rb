@@ -1,4 +1,5 @@
 require 'rom/solr/documents_paginator'
+require 'rom/solr/query_builder'
 
 module ROM
   module Solr
@@ -114,16 +115,18 @@ module ROM
       alias_method :query, :q
 
       def fq(*filters)
-        return self if filters.empty?
+        # fq param is repeatable
+        old_filters = Array.wrap(params[:fq])
+        new_filters = old_filters + Types::Array.of(Types::String)[filters]
 
-        add_params(fq: filters)
+        add_params(fq: new_filters)
       end
       alias_method :filter, :fq
 
       def fl(*fields)
-        return self if fields.empty?
+        new_fields = Types::Array.of(Types::Coercible::String)[fields]
 
-        add_params(fl: fields.join(','))
+        add_params(fl: new_fields.join(','))
       end
       alias_method :fields, :fl
 
@@ -148,10 +151,9 @@ module ROM
       end
 
       def sort(*criteria)
-        # This implementation is very tentative ...
-        new_sort = criteria.prepend(params[:sort]).compact.join(',')
+        new_sort = Types::Array.of(Types::String)[criteria]
 
-        add_params(sort: new_sort)
+        add_params(sort: new_sort.join(','))
       end
 
       def rows(num)
@@ -188,9 +190,7 @@ module ROM
       end
 
       def commit_within(millis)
-        return self if millis.nil?
-
-        add_params(commitWithin: Types::Coercible::Integer[millis])
+        add_params(commitWithin: Types::Coercible::Integer.optional[millis])
       end
 
       def overwrite(value = true)

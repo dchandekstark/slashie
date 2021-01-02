@@ -5,6 +5,8 @@ module ROM
     class Relation < ROM::HTTP::Relation
       extend Forwardable
 
+      RESPONSE_WRITERS = %w[ csv geojson javabin json php phps python ruby smile velocity xlsx xml xslt ]
+
       def_delegators :dataset, :response, :params
 
       adapter     :solr
@@ -14,17 +16,15 @@ module ROM
       # Need this?
       option :output_schema, default: ->{ NOOP_OUTPUT_SCHEMA }
 
-      def wt(format)
-        add_params(wt: Types::Coercible::String[format])
+      def wt(writer)
+        add_params(wt: Types::Coercible::String.enum(*RESPONSE_WRITERS)[writer])
       end
-      alias_method :format, :wt
 
-      def log_params_list(log_params)
-        lplist = log_params.nil? ? nil : Array.wrap(log_params).join(',')
+      def log_params_list(*log_params)
+        new_log_params = Types::Array.of(Types::String)[log_params]
 
-        add_params(logParamsList: lplist)
+        add_params(logParamsList: new_log_params.join(','))
       end
-      alias_method :log_params, :log_params_list
 
       def omit_header(omit = true)
         add_params(omitHeader: Types::Bool[omit])

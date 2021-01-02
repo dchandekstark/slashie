@@ -3,7 +3,6 @@ module ROM
     class Dataset < ROM::HTTP::Dataset
 
       setting :default_base_path, reader: true
-      # setting :default_params, reader: true
 
       configure do |config|
         config.default_response_handler = ResponseHandler
@@ -15,9 +14,6 @@ module ROM
 
       # @override
       option :base_path, type: Types::Path, default: proc { self.class.default_base_path || EMPTY_STRING }
-
-      # @override
-      # option :params, type: Types::Hash, default: proc { self.class.default_params || EMPTY_HASH }
 
       # @override Query parameters are valid with POST, too.
       def uri

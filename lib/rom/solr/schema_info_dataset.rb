@@ -5,11 +5,14 @@ module ROM
       configure do |config|
         config.default_base_path = 'schema'
 
-        config.default_response_handler =
-          proc { |*args| ResponseHandler.call(*args).values.flatten }
-      end
+        config.default_response_handler = Proc.new do |*args|
+          ResponseHandler.call(*args).values.flatten
+        end
 
-      option :params, type: Types::Hash, default: proc { { omitHeader: true } }
+        config.default_request_handler = Proc.new do |dataset|
+          RequestHandler.call(dataset.add_params(omitHeader: true))
+        end
+      end
 
     end
   end
