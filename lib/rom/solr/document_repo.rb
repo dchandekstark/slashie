@@ -1,3 +1,5 @@
+require 'rom/solr/query_builder'
+
 module ROM
   module Solr
     class DocumentRepo < Repository[:documents]

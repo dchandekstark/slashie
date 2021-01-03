@@ -34,7 +34,6 @@ module ROM::Solr
     describe "#fq" do
       it "adds :fq param" do
         expect(documents.fq('foo:bar', 'bim:bam').params).to include(fq: ['foo:bar', 'bim:bam'])
-        expect(documents.filter('foo:bar', 'bim:bam').params).to include(fq: ['foo:bar', 'bim:bam'])
       end
     end
 

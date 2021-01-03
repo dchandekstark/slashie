@@ -31,6 +31,14 @@ module ROM
         q('*:*')
       end
 
+      def query
+        QueryBuilder.new(self, :q)
+      end
+
+      def filter
+        QueryBuilder.new(self, :fq)
+      end
+
       # @override
       def count
         num_found_exact? ? num_found : super
@@ -109,96 +117,93 @@ module ROM
       # Common Query Parameters
       #
 
-      def q(query)
-        add_params(q: Types::String[query])
-      end
-      alias_method :query, :q
+      def q(*queries)
+        old_queries = Array.wrap(params[:q])
+        new_queries = Types::Array.of(Types::String)[queries]
 
-      def fq(*filters)
-        # fq param is repeatable
-        old_filters = Array.wrap(params[:fq])
-        new_filters = old_filters + Types::Array.of(Types::String)[filters]
-
-        add_params(fq: new_filters)
+        add_params q: (old_queries + new_queries).join(' ')
       end
-      alias_method :filter, :fq
+
+      def fq(*queries)
+        old_queries = Array.wrap(params[:fq])
+        new_queries = Types::Array.of(Types::String)[queries]
+
+        add_params fq: old_queries + new_queries
+      end
 
       def fl(*fields)
         new_fields = Types::Array.of(Types::Coercible::String)[fields]
 
-        add_params(fl: new_fields.join(','))
+        add_params fl: new_fields.join(',')
       end
+
       alias_method :fields, :fl
 
       def cache(enabled = true)
-        add_params(cache: Types::Bool[enabled])
+        add_params cache: Types::Bool[enabled]
       end
 
       def segment_terminate_early(enabled = true)
-        add_params(segmentTerminateEarly: Types::Bool[enabled])
+        add_params segmentTerminateEarly: Types::Bool[enabled]
       end
 
       def time_allowed(millis)
-        add_params(timeAllowed: Types::Coercible::Integer[millis])
+        add_params timeAllowed: Types::Coercible::Integer[millis]
       end
 
       def explain_other(query)
-        add_params(explainOther: Types::String[query])
+        add_params explainOther: Types::String[query]
       end
 
       def start(offset)
-        add_params(start: Types::Coercible::Integer[offset])
+        add_params start: Types::Coercible::Integer[offset]
       end
 
       def sort(*criteria)
         new_sort = Types::Array.of(Types::String)[criteria]
 
-        add_params(sort: new_sort.join(','))
+        add_params sort: new_sort.join(',')
       end
 
       def rows(num)
-        add_params(rows: Types::Coercible::Integer[num])
+        add_params rows: Types::Coercible::Integer[num]
       end
+
       alias_method :limit, :rows
 
       def def_type(value)
-        add_params(defType: Types::Coercible::String[value])
+        add_params defType: Types::Coercible::String[value]
       end
 
       def debug(setting)
-        type = Types::Coercible::String
-                 .enum('query', 'timing', 'results', 'all', 'true')
-
-        add_params(debug: type[setting])
+        add_params debug: Types::Coercible::String.enum('query', 'timing', 'results', 'all', 'true')[setting]
       end
 
       def echo_params(setting)
-        type = Types::Coercible::String.enum('explicit', 'all', 'none')
-
-        add_params(echoParams: type[setting])
+        add_params echoParams: Types::Coercible::String.enum('explicit', 'all', 'none')[setting]
       end
 
       def min_exact_count(num)
-        add_params(minExactCount: Types::Coercible::Integer[num])
+        add_params minExactCount: Types::Coercible::Integer[num]
       end
 
       #
       # Commit parameters
       #
       def commit(value = true)
-        add_params(commit: Types::Bool[value])
+        add_params commit: Types::Bool[value]
       end
 
       def commit_within(millis)
-        add_params(commitWithin: Types::Coercible::Integer.optional[millis])
+        add_params commitWithin: Types::Coercible::Integer.optional[millis]
       end
 
       def overwrite(value = true)
-        add_params(overwrite: Types::Bool[value])
+        add_params overwrite: Types::Bool[value]
       end
 
       def expunge_deletes(value = true)
-        add_params(expungeDeletes: Types::Bool[value])
+        add_params expungeDeletes: Types::Bool[value]
       end
 
     end

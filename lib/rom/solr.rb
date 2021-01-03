@@ -10,6 +10,19 @@ module ROM
       const_defined?(const_name, false) ? const_get(const_name, false) : Dataset
     end
 
+    # Applies quoting to values as necessary for Solr query processing.
+    #
+    # @param value [String] the raw value to be quoted
+    # @return [String] the value with quoting applied (if necessary).
+    def self.quote(value)
+      # Derived from Blacklight::Solr::SearchBuilderBehavior#solr_param_quote
+      unless value =~ /\A[a-zA-Z0-9$_\-\^]+\z/
+        '"' + value.gsub("'", "\\\\\'").gsub('"', "\\\\\"") + '"'
+      else
+        value
+      end
+    end
+
     module Types
       include ROM::HTTP::Types
     end
