@@ -1,5 +1,8 @@
-require 'rom-http'
 require 'securerandom'
+require 'date'
+require 'time'
+
+require 'rom-http'
 
 module ROM
   module Solr
@@ -21,6 +24,11 @@ module ROM
       else
         value
       end
+    end
+
+    # Formats a value as a Solr date.
+    def self.date(value)
+      DateTime.parse(value.to_s).to_time.utc.iso8601
     end
 
     module Types

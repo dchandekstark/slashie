@@ -31,14 +31,6 @@ module ROM
         q('*:*')
       end
 
-      def query
-        QueryBuilder.new(self, :q)
-      end
-
-      def filter
-        QueryBuilder.new(self, :fq)
-      end
-
       # @override
       def count
         num_found_exact? ? num_found : super
@@ -58,6 +50,18 @@ module ROM
 
       def cursor?
         params.key?(:cursorMark)
+      end
+
+      def query(&block)
+        queries = QueryBuilder.new.instance_eval(&block).to_a
+
+        q(*queries)
+      end
+
+      def filter(&block)
+        queries = QueryBuilder.new.instance_eval(&block).to_a
+
+        fq(*queries)
       end
 
       #
@@ -119,14 +123,14 @@ module ROM
 
       def q(*queries)
         old_queries = Array.wrap(params[:q])
-        new_queries = Types::Array.of(Types::String)[queries]
+        new_queries = Array.wrap(queries).flatten
 
         add_params q: (old_queries + new_queries).join(' ')
       end
 
       def fq(*queries)
         old_queries = Array.wrap(params[:fq])
-        new_queries = Types::Array.of(Types::String)[queries]
+        new_queries = Array.wrap(queries).flatten
 
         add_params fq: old_queries + new_queries
       end
