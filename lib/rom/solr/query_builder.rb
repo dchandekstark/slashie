@@ -1,10 +1,9 @@
-# frozen_string_literal: true
-
 require 'rom/solr/query'
 
 module ROM
   module Solr
     class QueryBuilder
+      include Utils
 
       attr_accessor :queries
 
@@ -16,9 +15,19 @@ module ROM
         queries
       end
 
-      Query.public_instance_methods.each do |name|
-        define_method(name) do |*args|
+      def raw(*queries)
+        self.queries += queries
+      end
+
+      def respond_to_missing?(name, include_private = false)
+        Query.public_method_defined?(name, false) || super
+      end
+
+      def method_missing(name, *args)
+        if Query.respond_to?(name, false)
           self.queries += Query.send(name, *args)
+        else
+          super
         end
       end
 

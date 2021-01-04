@@ -3,50 +3,44 @@
 module ROM
   module Solr
     module Query
+      include Utils
+
+      ANY_VALUE = '[* TO *]'
+      OR        = ' OR '
+      AND       = ' AND '
 
       # Templates
       DISJUNCTION = '{!lucene q.op=OR df=%{field}}%{value}'
       JOIN        = '{!join from=%{from} to=%{to}}%{field}:%{value}'
       NEGATION    = '-%{field}:%{value}'
-      NOT_EXIST   = '-%{field}:[* TO *]'
-      RANGE_EXCLUDE_NONE = '%{field}:[%{from} TO %{to}]'
-      RANGE_EXCLUDE_FROM = '%{field}:{%{from} TO %{to}]'
-      RANGE_EXCLUDE_TO   = '%{field}:[%{from} TO %{to}}'
-      RANGE_EXCLUDE_BOTH = '%{field}:{%{from} TO %{to}}'
       REGEXP      = '%{field}:/%{value}/'
       STANDARD    = '%{field}:%{value}'
       TERM        = '{!term f=%{field}}%{value}'
 
       # Value transformers
-      NOOP           = ->{ self }
-      QUOTE          = ->{ ROM::Solr.quote(self) }
-      ESCAPE_SLASHES = ->{ gsub(/\//, "\\/") }
-      SOLR_DATE      = ->{ ROM::Solr.date(self) }
-      INTEGER        = ->{ to_i }
+      NOOP          = ->(v) { v }
+      ESCAPE        = ->(v) { escape(v) }
+      INTEGER       = ->(v) { v.to_i }
+      BEFORE_DATE   = ->(v) { '[* TO %s]' % solr_date(v) }
+      AFTER_DATE    = ->(v) { '[%s TO NOW]' % solr_date(v) }
+      BETWEEN_DATES = ->(a, b) { '[%s TO %s]' % [solr_date(a), solr_date(b)] }
+      EXACT_DATE    = ->(v) { escape(solr_date(v)) }
 
       # Build standard query clause(s) -- i.e., field:value --
       # and disjunction clauses (i.e., when value is an array).
       #
-      # @param mapping [Hash<<Symbol, String>, <String, Array<String>>]
-      #   field=>value mapping
+      # @param mapping [Hash] field=>value mapping
       # @return [Array<String>] queries
       def where(mapping)
-        mapping.map do |field, value|
-          if Array.wrap(value).size > 1
-            render(DISJUNCTION, {field=>value}, ->{ map { |v| ROM::Solr.quote(v) }.join(' ') })
-          else
-            render(STANDARD, {field=>value}, QUOTE)
-          end
-        end.flatten
+        render(STANDARD, mapping, ->(v) { Array.wrap(v).join(OR) })
       end
 
       # Builds negation clause(s) -- i.e., -field:value
       #
-      # @param mapping [Hash<<Symbol, String>, #to_s>] field=>value mapping
-      # @return [QueryBuilder]
+      # @param mapping [Hash] field=>value mapping
       # @return [Array<String>] queries
       def where_not(mapping)
-        render(NEGATION, mapping, QUOTE)
+        render(NEGATION, mapping)
       end
 
       # Builds query clause(s) to filter where field is present
@@ -55,9 +49,9 @@ module ROM
       # @param fields [Array<String>] on or more fields
       # @return [Array<String>] queries
       def exist(*fields)
-        mapping = fields.map { |field| {field: field, from: '*', to: '*'} }
+        mapping = fields.map { |field| {field: field, value: ANY_VALUE} }
 
-        range(mapping)
+        render(STANDARD, mapping)
       end
 
       # Builds query clause(s) to filter where field is NOT present
@@ -66,15 +60,9 @@ module ROM
       # @param fields [Array<Symbol, String>] one or more fields
       # @return [Array<String>] queries
       def not_exist(*fields)
-        mapping = fields.map { |field| {field: "-#{field}", from: '*', to: '*'} }
+        mapping = fields.map { |field| {field: "-#{field}", value: ANY_VALUE} }
 
-        range(mapping)
-      end
-
-      def range(field:, from:, to:, exclude: :none)
-        template = Query.const_get("RANGE_EXCLUDE_#{exclude.to_s.upcase}")
-
-        [ template % spec ]
+        render(STANDARD, mapping)
       end
 
       # Builds a Solr join clause
@@ -86,30 +74,35 @@ module ROM
       # @param value [String]
       # @return [Array<String>] queries
       def join(from:, to:, field:, value:)
-        [ JOIN % { from: from, to: to, field: field, value: ROM::Solr.quote(value) } ]
+        [ JOIN % { from: from, to: to, field: field, value: value } ]
       end
 
       # Builds query clause(s) to filter where date field value
       # is earlier than a date/time value.
       #
-      # @param mapping [Hash<<Symbol, String>, Object>] field=>value mapping
+      # @param mapping [Hash] field=>value mapping
       #   Values (coerced to strings) must be parseable by `DateTime.parse`.
       # @return [Array<String>] queries
       def before(mapping)
-        mapping.map do |field, value|
-          range(field: field, from: '*', to: ROM::Solr.date(value))
-        end.flatten
+        render(STANDARD, mapping, BEFORE_DATE)
       end
 
       # Builds query clause(s) to filter where date field value
-      # is earlier than a number of days before now.
+      # is later than a date/time value.
       #
       # @param mapping [Hash] field=>value mapping
+      #   Values (coerced to strings) must be parseable by `DateTime.parse`.
       # @return [Array<String>] queries
-      def before_days(mapping)
-        mapping.map do |field, value|
-          range(field: field, from: '*', to: "NOW-#{value}DAYS")
-        end.flatten
+      def after(mapping)
+        render(STANDARD, mapping, AFTER_DATE)
+      end
+
+      def between_dates(mapping)
+        render(STANDARD, mapping, BETWEEN_DATES)
+      end
+
+      def exact_date(mapping)
+        render(STANDARD, mapping, EXACT_DATE)
       end
 
       # Builds term query clause(s) to filter where field contains value.
@@ -125,14 +118,14 @@ module ROM
       # @param mapping [Hash] field=>value mapping
       # @return [Array<String>] queries
       def regexp(mapping)
-        render(REGEXP, mapping, ESCAPE_SLASHES)
+        render(REGEXP, mapping, ESCAPE_SLASHE)
       end
 
       private
 
       def render(template, mapping, transformer = NOOP)
-        mapping.map do |field, value|
-          template % {field: field, value: value.instance_exec(&transformer)}
+        mapping.transform_values(&transformer).map do |field, value|
+          template % {field: field, value: value}
         end
       end
 
