@@ -4,10 +4,6 @@ require 'rom-http'
 module ROM
   module Solr
 
-    ESCAPE_CHARS     = Regexp.new('[%s]' % Regexp.escape('+-!(){}[]^"~*?:/'))
-    DOUBLE_AMPERSAND = Regexp.new('&&')
-    DOUBLE_PIPE      = Regexp.new('\|\|')
-
     def self.dataset_class(name)
       prefix = name.to_s.split(/[_\/]/).map(&:capitalize).join('')
       const_name = "#{prefix}Dataset"

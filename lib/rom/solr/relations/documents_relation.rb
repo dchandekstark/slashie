@@ -9,6 +9,9 @@ module ROM
 
       schema(:documents) { }
 
+      AND       = '&&'
+      OR        = '||'
+
       # @override
       def each(&block)
         return super unless cursor?
@@ -121,11 +124,11 @@ module ROM
       # Common Query Parameters
       #
 
-      def q(*queries)
-        old_queries = Array.wrap(params[:q])
+      # Main Solr query param
+      def q(*queries, op: AND)
         new_queries = Array.wrap(queries).flatten
 
-        add_params q: (old_queries + new_queries).join(' ')
+        add_params q: new_queries.join(" #{op} ")
       end
 
       def fq(*queries)

@@ -11,6 +11,34 @@ module ROM::Solr
 
     let(:documents) { container.relations[:documents] }
 
+    describe "#query" do
+      it "yields a QueryBuilder to the block" do
+        expect { |b| documents.query(&b) }.to yield_with_args
+      end
+
+      it "adds the queries from the QueryBuilder to the :q param" do
+        expect(
+          documents.query {
+            where(title: quote('A Little History'))
+          }.params[:q]
+        ).to eq('title:"A Little History"')
+      end
+    end
+
+    describe "#filter" do
+      it "yields a QueryBuilder to the block" do
+        expect { |b| documents.filter(&b) }.to yield_with_args
+      end
+
+      it "adds the queries from the QueryBuilder to the :fq param" do
+        expect(
+          documents.filter {
+            where(title: quote('A Little History'))
+          }.params[:fq]
+        ).to eq(['title:"A Little History"'])
+      end
+    end
+
     describe "#by_unique_key" do
       it "adds unique key query" do
         expect(documents.by_unique_key("09e59b1c-2d0e-49be-adbd-af9b9a3b453a").params)

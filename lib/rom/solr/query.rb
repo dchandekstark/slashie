@@ -2,45 +2,47 @@
 
 module ROM
   module Solr
+    #
+    # A module of static methods, each of which returns an array of Solr queries,
+    # which is intended to function as a DSL in the context of a QueryBuilder.
+    #
     module Query
-      include Utils
 
       ANY_VALUE = '[* TO *]'
-      OR        = ' OR '
-      AND       = ' AND '
 
       # Templates
       DISJUNCTION = '{!lucene q.op=OR df=%{field}}%{value}'
       JOIN        = '{!join from=%{from} to=%{to}}%{field}:%{value}'
       NEGATION    = '-%{field}:%{value}'
-      REGEXP      = '%{field}:/%{value}/'
       STANDARD    = '%{field}:%{value}'
       TERM        = '{!term f=%{field}}%{value}'
 
       # Value transformers
       NOOP          = ->(v) { v }
-      ESCAPE        = ->(v) { escape(v) }
-      INTEGER       = ->(v) { v.to_i }
-      BEFORE_DATE   = ->(v) { '[* TO %s]' % solr_date(v) }
-      AFTER_DATE    = ->(v) { '[%s TO NOW]' % solr_date(v) }
-      BETWEEN_DATES = ->(a, b) { '[%s TO %s]' % [solr_date(a), solr_date(b)] }
-      EXACT_DATE    = ->(v) { escape(solr_date(v)) }
+      REGEX         = ->(v) { Utils.regex(v) }
+      BEFORE_DATE   = ->(v) { '[* TO %s]' % Utils.solr_date(v) }
+      AFTER_DATE    = ->(v) { '[%s TO NOW]' % Utils.solr_date(v) }
+      BETWEEN_DATES = ->(v) { '[%s TO %s]' % v.map { |d| Utils.solr_date(d) } }
+      EXACT_DATE    = ->(v) { Utils.escape(Utils.solr_date(v)) }
 
       # Build standard query clause(s) -- i.e., field:value --
       # and disjunction clauses (i.e., when value is an array).
       #
       # @param mapping [Hash] field=>value mapping
       # @return [Array<String>] queries
-      def where(mapping)
-        render(STANDARD, mapping, ->(v) { Array.wrap(v).join(OR) })
+      def where(**mapping)
+        lists   = mapping.select { |v| Array.wrap(v).length > 1 }
+        scalars = mapping.reject { |k, v| lists.key?(k) }
+
+        render(STANDARD, **scalars) + render(DISJUNCTION, **lists)
       end
 
       # Builds negation clause(s) -- i.e., -field:value
       #
       # @param mapping [Hash] field=>value mapping
       # @return [Array<String>] queries
-      def where_not(mapping)
-        render(NEGATION, mapping)
+      def where_not(**mapping)
+        render(NEGATION, **mapping)
       end
 
       # Builds query clause(s) to filter where field is present
@@ -49,9 +51,9 @@ module ROM
       # @param fields [Array<String>] on or more fields
       # @return [Array<String>] queries
       def exist(*fields)
-        mapping = fields.map { |field| {field: field, value: ANY_VALUE} }
+        mapping = fields.map { |field| [field, ANY_VALUE] }.to_h
 
-        render(STANDARD, mapping)
+        render(STANDARD, **mapping)
       end
 
       # Builds query clause(s) to filter where field is NOT present
@@ -60,9 +62,9 @@ module ROM
       # @param fields [Array<Symbol, String>] one or more fields
       # @return [Array<String>] queries
       def not_exist(*fields)
-        mapping = fields.map { |field| {field: "-#{field}", value: ANY_VALUE} }
+        mapping = fields.map { |field| [field, ANY_VALUE] }.to_h
 
-        render(STANDARD, mapping)
+        render(NEGATION, **mapping)
       end
 
       # Builds a Solr join clause
@@ -83,8 +85,8 @@ module ROM
       # @param mapping [Hash] field=>value mapping
       #   Values (coerced to strings) must be parseable by `DateTime.parse`.
       # @return [Array<String>] queries
-      def before(mapping)
-        render(STANDARD, mapping, BEFORE_DATE)
+      def before(**mapping)
+        render(STANDARD, BEFORE_DATE, **mapping)
       end
 
       # Builds query clause(s) to filter where date field value
@@ -93,37 +95,45 @@ module ROM
       # @param mapping [Hash] field=>value mapping
       #   Values (coerced to strings) must be parseable by `DateTime.parse`.
       # @return [Array<String>] queries
-      def after(mapping)
-        render(STANDARD, mapping, AFTER_DATE)
+      def after(**mapping)
+        render(STANDARD, AFTER_DATE, **mapping)
       end
 
-      def between_dates(mapping)
-        render(STANDARD, mapping, BETWEEN_DATES)
+      # Builds query clause(s) to filter where date field value
+      # is between two dates (inclusive).
+      #
+      # @example
+      #   between_dates(published: ['2019-01-01 00:00:00', '2019-12-31 23:59:59'])
+      # @param mapping [Hash] field=>[value, value] mapping
+      #   Values (coerced to strings) must be parseable by `DateTime.parse`.
+      # @return [Array<String>] queries
+      def between_dates(**mapping)
+        render(STANDARD, BETWEEN_DATES, **mapping)
       end
 
-      def exact_date(mapping)
-        render(STANDARD, mapping, EXACT_DATE)
+      def exact_date(**mapping)
+        render(STANDARD, EXACT_DATE, **mapping)
       end
 
       # Builds term query clause(s) to filter where field contains value.
       #
       # @param mapping [Hash] field=>value mapping
       # @return [Array<String>] queries
-      def term(mapping)
-        render(TERM, mapping)
+      def term(**mapping)
+        render(TERM, **mapping)
       end
 
       # Builds regular expression query clause(s).
       #
       # @param mapping [Hash] field=>value mapping
       # @return [Array<String>] queries
-      def regexp(mapping)
-        render(REGEXP, mapping, ESCAPE_SLASHE)
+      def regex(**mapping)
+        render(STANDARD, REGEX, **mapping)
       end
 
       private
 
-      def render(template, mapping, transformer = NOOP)
+      def render(template, transformer = NOOP, **mapping)
         mapping.transform_values(&transformer).map do |field, value|
           template % {field: field, value: value}
         end
