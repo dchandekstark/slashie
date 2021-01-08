@@ -34,7 +34,7 @@ module ROM
       def uri
         @uri ||= URI(dataset.uri).tap do |u|
           if dataset.params?
-            u.query ||= URI.encode_www_form(dataset.params)
+            u.query ||= dataset.param_encoder.call(dataset.params)
           end
         end
       end
