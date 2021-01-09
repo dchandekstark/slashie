@@ -1,3 +1,5 @@
+require 'logger'
+
 require 'solrbee/version'
 
 require 'dry-types'
@@ -6,6 +8,8 @@ require 'rom/solr'
 module Solrbee
 
   DEFAULT_URI = ENV.fetch('SOLR_URL', 'http://localhost:8983/solr').freeze
+
+  LOG_LEVEL = ENV.fetch('SOLRBEE_LOG_LEVEL', 'DEBUG')
 
   def self.documents
     ROM::Solr::DocumentRepo.new(container)
@@ -24,6 +28,10 @@ module Solrbee
 
       yield config if block_given?
     end
+  end
+
+  def self.logger
+    @logger ||= Logger.new(STDOUT, level: Logger.const_get(LOG_LEVEL))
   end
 
   module Types

@@ -9,9 +9,6 @@ module ROM
 
       schema(:documents) { }
 
-      AND       = '&&'
-      OR        = '||'
-
       # @override
       def each(&block)
         return super unless cursor?
@@ -56,13 +53,13 @@ module ROM
       end
 
       def query(&block)
-        queries = QueryBuilder.new.instance_eval(&block).to_a
+        queries = QueryBuilder.call(&block)
 
         q(*queries)
       end
 
       def filter(&block)
-        queries = QueryBuilder.new.instance_eval(&block).to_a
+        queries = QueryBuilder.call(&block)
 
         fq(*queries)
       end
@@ -71,53 +68,46 @@ module ROM
       # Commands
       #
 
-      def insert(docs)
-        # FIXME: use input schema
+      def insert(docs, **opts)
+        # FIXME: use input schema?
         data = Array.wrap(docs).map do |doc|
           doc.transform_keys!(&:to_sym)
           doc[:id] ||= UUID[]
           doc
         end
 
-        with_options(
-          base_path: 'update/json/docs',
-          content_type: 'application/json',
-          request_data: JSON.dump(data)
+        update_json_docs(
+          data,
+          opts.slice(:commit, :commit_within, :wait_searcher)
         )
       end
 
-      def update(docs)
-        # FIXME: use input schema
+      def update(docs, **opts)
+        # FIXME: use input schema?
         data = Array.wrap(docs)
                  .map    { |doc| doc.transform_keys(&:to_sym) }
                  .select { |doc| doc.key?(:id) }
 
-        with_options(
-          base_path: 'update/json/docs',
-          content_type: 'application/json',
-          request_data: JSON.dump(data)
+        update_json_docs(
+          data,
+          opts.slice(:commit, :commit_within, :overwrite, :wait_searcher)
         )
       end
 
-      def delete(docs)
-        # FIXME: use input schema
+      def delete(docs, **opts)
+        # FIXME: use input schema?
         ids = Array.wrap(docs)
                 .map { |doc| doc.transform_keys(&:to_sym) }
                 .map { |doc| doc.fetch(:id) }
 
-        with_options(
-          base_path: 'update',
-          content_type: 'application/json',
-          request_data: JSON.dump(delete: ids)
+        json_update_command(
+          { delete: ids },
+          opts.slice(:commit, :commit_within, :wait_searcher, :expunge_deletes)
         )
       end
 
       def delete_by_query(query)
-        with_options(
-          base_path: 'update',
-          content_type: 'application/json',
-          request_data: JSON.dump(delete: {query: query})
-        )
+        json_update_command(delete: {query: query})
       end
 
       #
@@ -125,10 +115,10 @@ module ROM
       #
 
       # Main Solr query param
-      def q(*queries, op: AND)
+      def q(*queries)
         new_queries = Array.wrap(queries).flatten
 
-        add_params q: new_queries.join(" #{op} ")
+        add_params q: new_queries.join(' ')
       end
 
       def fq(*queries)
@@ -211,6 +201,31 @@ module ROM
 
       def expunge_deletes(value = true)
         add_params expungeDeletes: Types::Bool[value]
+      end
+
+      def wait_searcher(value = true)
+        add_params waitSearcher: Types::Bool[value]
+      end
+
+      private
+
+      def json_update_command(data, **opts)
+        __update__('update', data, **opts)
+      end
+
+      def update_json_docs(data, **opts)
+        __update__('update/json/docs', data, **opts)
+      end
+
+      def __update__(base_path, data, **opts)
+        opts
+          .reduce(self) { |memo, (key, value)| memo.send(key, value) }
+          .with_options(
+            base_path: base_path,
+            content_type: 'application/json',
+            request_method: :post,
+            request_data: JSON.dump(data)
+          )
       end
 
     end

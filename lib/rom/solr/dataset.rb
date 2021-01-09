@@ -2,7 +2,7 @@ module ROM
   module Solr
     class Dataset < ROM::HTTP::Dataset
 
-      setting :default_base_path, reader: true
+      setting :default_base_path, EMPTY_STRING, reader: true
 
       configure do |config|
         config.default_response_handler = ResponseHandler
@@ -13,7 +13,7 @@ module ROM
       option :content_type, type: Types::String, optional: true
 
       # @override
-      option :base_path, type: Types::Path, default: proc { self.class.default_base_path || EMPTY_STRING }
+      option :base_path, type: Types::Path, default: proc { self.class.default_base_path }
 
       # @override Query parameters are valid with POST, too.
       def uri

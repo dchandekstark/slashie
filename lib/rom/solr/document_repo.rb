@@ -10,6 +10,14 @@ module ROM
         documents.by_unique_key(id).one!
       end
 
+      def query(&block)
+        documents.query(&block)
+      end
+
+      def filter(&block)
+        documents.filter(&block)
+      end
+
       def all
         documents.all
       end
@@ -32,12 +40,8 @@ module ROM
 
       private
 
-      def docs_command(command, data, commit: false, commit_within: nil)
-        documents
-          .commit(commit)
-          .commit_within(commit_within)
-          .command(command)
-          .call(data)
+      def docs_command(command, data, **opts)
+        documents.command(command).call(data, **opts)
       end
 
     end

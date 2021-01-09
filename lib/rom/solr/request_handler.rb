@@ -13,16 +13,24 @@ module ROM
       end
 
       def execute
+        Solrbee.logger.debug { "Dataset: #{dataset.inspect}" }
+
         Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme.eql?('https')) do |http|
+          Solrbee.logger.debug { "%s: %s %s" % [self.class, request.method, uri.request_uri] }
+
           http.request(request)
         end
       end
 
       def request
-        request_class.new(uri.request_uri, headers).tap do |req|
+        @request ||= request_class.new(uri.request_uri, headers).tap do |req|
           if dataset.request_data?
             req.body = dataset.request_data
             req.content_type = dataset.content_type
+
+            if req.content_type == 'application/json'
+              Solrbee.logger.debug { "Request data: %s" % req.body[0..99] + (req.body.length > 100 ? ' ...' : '') }
+            end
           end
         end
       end

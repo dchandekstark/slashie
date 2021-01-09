@@ -19,9 +19,9 @@ module ROM::Solr
       it "adds the queries from the QueryBuilder to the :q param" do
         expect(
           documents.query {
-            where(title: quote('A Little History'))
+            where(title: quote('A Little History'), author: 'Smith')
           }.params[:q]
-        ).to eq('title:"A Little History"')
+        ).to eq('title:"A Little History" author:Smith')
       end
     end
 
@@ -33,9 +33,9 @@ module ROM::Solr
       it "adds the queries from the QueryBuilder to the :fq param" do
         expect(
           documents.filter {
-            where(title: quote('A Little History'))
+            where(title: quote('A Little History'), author: 'Smith')
           }.params[:fq]
-        ).to eq(['title:"A Little History"'])
+        ).to eq(['title:"A Little History"', 'author:Smith'])
       end
     end
 
@@ -147,8 +147,6 @@ module ROM::Solr
       end
     end
 
-    describe "#count"
-
     describe "#commit" do
       it "adds :commit param" do
         expect(documents.commit.params).to include(commit: true)
@@ -203,7 +201,19 @@ module ROM::Solr
       end
     end
 
-    describe "#update"
+    describe "#update" do
+      let(:docs) do
+        [ {id: 1, title: "It was the best of times"}, {id: 2, title: "It was the worst of times"} ]
+      end
+
+      it "adds the docs to the request" do
+        data = documents.insert(docs).dataset.request_data
+        expect(data).to match(/It was the best of times/)
+        expect(data).to match(/It was the worst of times/)
+      end
+    end
+
+    describe "#count"
 
   end
 end
