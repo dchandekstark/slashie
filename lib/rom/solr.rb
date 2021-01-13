@@ -4,6 +4,9 @@ require 'rom-http'
 module ROM
   module Solr
 
+    Error = Class.new(StandardError)
+    NotFoundError = Class.new(Error)
+
     def self.dataset_class(name)
       prefix = name.to_s.split(/[_\/]/).map(&:capitalize).join('')
       const_name = "#{prefix}Dataset"
@@ -30,7 +33,6 @@ require 'rom/solr/response_handler'
 # Datasets
 require 'rom/solr/dataset'
 require 'rom/solr/documents_dataset'
-require 'rom/solr/schema_info_dataset'
 
 # Gateway
 require 'rom/solr/gateway'

@@ -7,7 +7,9 @@ module ROM
 
       def_delegators :dataset, :num_found, :num_found_exact?
 
-      schema(:documents) { }
+      schema(:documents) do
+        # no-op
+      end
 
       # @override
       def each(&block)

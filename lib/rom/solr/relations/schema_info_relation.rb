@@ -6,6 +6,14 @@ module ROM
         # no-op
       end
 
+      dataset do
+        with_options(
+          base_path: 'schema',
+          params: { omitHeader: true },
+          response_handler: ->(*args) { ResponseHandler.call(*args).values.flatten }
+        )
+      end
+
       def show_defaults(show = true)
         add_params(showDefaults: Types::Bool[show])
       end

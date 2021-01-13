@@ -24,6 +24,13 @@ module ROM
         define_method name, proc { |*args| schema_info.send(name, *args).one! }
       end
 
+      def field_map(**opts)
+        fields(**opts).each_with_object({}) do |field, memo|
+          key = field.delete(:name)
+          memo[key] = field
+        end
+      end
+
     end
   end
 end

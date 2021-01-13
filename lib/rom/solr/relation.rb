@@ -3,7 +3,10 @@ require 'forwardable'
 module ROM
   module Solr
     class Relation < ROM::HTTP::Relation
+
       extend Forwardable
+
+      include Enumerable
 
       RESPONSE_WRITERS = %w[ csv geojson javabin json php phps python ruby smile velocity xlsx xml xslt ]
 
