@@ -28,6 +28,10 @@ module ROM
         with_options(request_data: data)
       end
 
+      def with_response_handler(handler)
+        with_options(response_handler: handler)
+      end
+
       # Copies and makes private superclass #response method
       alias_method :__response__, :response
       private :__response__

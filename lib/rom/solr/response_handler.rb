@@ -8,15 +8,12 @@ module ROM
       # @raise [Error] a parser or HTTP error
       def self.call(response, dataset)
         Solrbee.logger.debug { "#{self}: #{response.inspect}" }
-
-        if response.is_a?(Net::HTTPSuccess)
-          return parse(response)
-        end
-
+        response.value
+        parse(response)
+      rescue Net::HTTPServerException => e
         err_msg = parse(response).dig(:error, :msg) rescue nil
         err_msg ||= e.full_message
         err_type = response.is_a?(Net::HTTPNotFound) ? NotFoundError : Error
-
         raise err_type, err_msg
       end
 

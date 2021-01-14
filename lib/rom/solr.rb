@@ -29,6 +29,7 @@ require 'rom/solr/utils'
 # Handlers
 require 'rom/solr/request_handler'
 require 'rom/solr/response_handler'
+require 'rom/solr/response_key_handler'
 
 # Datasets
 require 'rom/solr/dataset'

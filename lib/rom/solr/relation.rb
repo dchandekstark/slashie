@@ -16,8 +16,14 @@ module ROM
       auto_struct false
       auto_map    false
 
+      forward :with_request_data, :with_response_handler
+
       # Need this?
       option :output_schema, default: ->{ NOOP_OUTPUT_SCHEMA }
+
+      def with_response_key(key)
+        with_response_handler(ResponseKeyHandler[key])
+      end
 
       def wt(writer)
         add_params(wt: Types::Coercible::String.enum(*RESPONSE_WRITERS)[writer])

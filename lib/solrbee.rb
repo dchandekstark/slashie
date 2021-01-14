@@ -26,6 +26,8 @@ module Solrbee
         namespace: 'ROM::Solr'
       )
 
+      config.register_command *(ROM::Solr::ModifySchema.commands)
+
       yield config if block_given?
     end
   end
